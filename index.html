@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Cash Zimbabwe | Loan Application</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f1f4f9;
+      color: #18243a;
+    }
+    header {
+      background: #102b50;
+      color: white;
+      padding: 25px 18px;
+      text-align: center;
+    }
+    header h1 { margin: 0 0 8px; }
+    main {
+      max-width: 550px;
+      margin: 30px auto;
+      padding: 25px;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 5px 25px #00000012;
+    }
+    label {
+      display: block;
+      margin: 17px 0 7px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #ccd3df;
+      border-radius: 7px;
+      font-size: 16px;
+    }
+    input[type="range"] { padding: 0; }
+    .amount {
+      text-align: center;
+      font-size: 27px;
+      font-weight: bold;
+      color: #14734a;
+      margin: 15px;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 22px;
+      border: 0;
+      border-radius: 8px;
+      background: #14734a;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .terms {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .terms input { width: auto; margin-top: 3px; }
+    .terms label { margin: 0; font-weight: normal; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>QUICK CASH ZIMBABWE</h1>
+    <p>Simple and convenient loan applications</p>
+  </header>
+
+  <main>
+    <h2>Loan Application</h2>
+    <form id="loanForm">
+      <label>Full Name</label>
+      <input name="fullName" required>
+
+      <label>Phone Number</label>
+      <input name="phone" type="tel" required>
+
+      <label>National ID Number</label>
+      <input name="nationalId" required>
+
+      <label>Loan Amount (USD)</label>
+      <div class="amount" id="amountDisplay">USD 500</div>
+      <input id="loanAmount" name="loanAmount" type="range"
+        min="500" max="50000" step="500" value="500">
+
+      <label>Employment Status</label>
+      <select name="employment" required>
+        <option value="">Select employment status</option>
+        <option>Employed</option>
+        <option>Self-employed</option>
+        <option>Unemployed</option>
+        <option>Business owner</option>
+      </select>
+
+      <label>Monthly Net Income (USD)</label>
+      <input name="income" type="number" min="0" required>
+
+      <label>Repayment Timeline</label>
+      <select name="repayment" required>
+        <option value="">Select repayment period</option>
+        <option>1 month</option>
+        <option>3 months</option>
+        <option>6 months</option>
+        <option>9 months</option>
+        <option>12 months</option>
+        <option>18 months</option>
+        <option>24 months</option>
+      </select>
+
+      <div class="terms">
+        <input type="checkbox" id="terms" required>
+        <label for="terms">I have read and accepted the loan terms and conditions.</label>
+      </div>
+
+      <button type="submit">Continue</button>
+    </form>
+  </main>
+
+  <script>
+    const slider = document.getElementById("loanAmount");
+    const display = document.getElementById("amountDisplay");
+
+    slider.addEventListener("input", () => {
+      display.textContent = "USD " +
+        Number(slider.value).toLocaleString("en-US");
+    });
+
+    document.getElementById("loanForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      alert("Application form completed. Secure verification will be configured next.");
+    });
+  </script>
+</body>
+</html>
