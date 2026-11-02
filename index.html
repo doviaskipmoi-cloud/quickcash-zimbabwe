@@ -126,19 +126,65 @@
     </form>
   </main>
 
-  <script>
-    const slider = document.getElementById("loanAmount");
-    const display = document.getElementById("amountDisplay");
+ 
+<script>
+  const slider = document.getElementById("loanAmount");
+  const display = document.getElementById("amountDisplay");
 
-    slider.addEventListener("input", () => {
-      display.textContent = "USD " +
-        Number(slider.value).toLocaleString("en-US");
-    });
+  slider.addEventListener("input", () => {
+    display.textContent = "USD " +
+      Number(slider.value).toLocaleString("en-US");
+  });
 
-    document.getElementById("loanForm").addEventListener("submit", (event) => {
-      event.preventDefault();
-      alert("Application form completed. Secure verification will be configured next.");
-    });
-  </script>
+  document.getElementById("loanForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const form = event.target;
+    const button = form.querySelector('button[type="submit"]');
+
+    const application = {
+      full_name: form.elements["fullName"].value.trim(),
+      phone: form.elements["phone"].value.trim(),
+      national_id: form.elements["nationalId"].value.trim(),
+      loan_amount: Number(form.elements["loanAmount"].value),
+      employment_status: form.elements["employment"].value,
+      monthly_income: Number(form.elements["income"].value),
+      repayment_period: form.elements["repayment"].value
+    };
+
+    button.disabled = true;
+    button.textContent = "Submitting...";
+
+    try {
+      const response = await fetch(
+        "https://quickcash-backend.doviaskipmoi.workers.dev/applications",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(application)
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Application failed.");
+      }
+
+      sessionStorage.setItem("applicationId", result.application_id);
+      sessionStorage.setItem("applicationPhone", application.phone);
+
+      alert("Application submitted successfully!");
+
+      window.location.href = "verify.html";
+
+    } catch (error) {
+      alert(error.message || "Unable to submit. Please try again.");
+      button.disabled = false;
+      button.textContent = "Continue";
+    }
+  });
+</script>
+
 </body>
 </html>
