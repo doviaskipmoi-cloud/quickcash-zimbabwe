@@ -378,7 +378,28 @@ button:disabled {
   </div>
 </div>
 
-<script>
+<script> 
+const activityItems = [
+  "Sample application — USD 1,500 — Harare",
+  "Sample application — USD 800 — Bulawayo",
+  "Sample application — USD 2,000 — Gweru",
+  "Sample application — USD 1,200 — Mutare",
+  "Sample application — USD 3,000 — Masvingo"
+];
+
+let activityIndex = 0;
+
+setInterval(() => {
+  const activity = document.getElementById("activityText");
+
+  activityIndex = (activityIndex + 1) % activityItems.length;
+
+  activity.style.animation = "none";
+  void activity.offsetWidth;
+  activity.textContent = activityItems[activityIndex];
+  activity.style.animation = "slideActivity .5s ease";
+}, 4000);
+
 const form = document.getElementById("form");
 const slider = document.getElementById("slider");
 const display = document.getElementById("display");
