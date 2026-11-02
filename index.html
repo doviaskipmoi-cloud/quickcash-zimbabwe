@@ -3,272 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quick Cash Zimbabwe | AI Loan Application</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
+  <title>Quick Cash Zimbabwe</title>
   <style>
     :root {
-      --bg-dark: #070b12;
-      --card-bg: rgba(15, 23, 42, 0.75);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --primary-green: #00e676;
-      --primary-green-glow: rgba(0, 230, 118, 0.35);
-      --accent-cyan: #00f2fe;
-      --accent-blue: #4facfe;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
-      --navy-deep: #020617;
-      --danger-red: #ff4757;
-      --gold-star: #ffc107;
+      --bg: #070b12; --card: rgba(15, 23, 42, 0.85);
+      --green: #00e676; --text: #f8fafc; --muted: #94a3b8;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 16px; }
+    .container { width: 100%; max-width: 480px; }
+    .card { background: var(--card); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    h2 { font-size: 22px; margin-bottom: 4px; }
+    p { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+    .group { margin-bottom: 14px; }
+    label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+    input, select { width: 100%; padding: 12px; background: rgba(2,6,23,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: var(--text); font-size: 14px; outline: none; }
+    input:focus, select:focus { border-color: var(--green); }
+    .calc { background: rgba(2,6,23,0.5); padding: 16px; border-radius: 12px; text-align: center; margin-bottom: 14px; }
+    .amount { font-size: 32px; font-weight: 800; color: var(--green); margin: 6px 0; }
+    input[type="range"] { width: 100%; height: 6px; accent-color: var(--green); }
+    .terms { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--muted); margin: 16px 0; }
+    .terms input { width: auto; margin-top: 2px; }
+    button { width: 100%; padding: 15px; background: var(--green); border: none; border-radius: 12px; color: #020617; font-size: 15px; font-weight: 800; cursor: pointer; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <h2>Loan Application</h2>
+    <p>Complete details for instant evaluation</p>
+    <form id="form">
+      <div class="group"><label>Full Name</label><input name="fullName" required></div>
+      <div class="group"><label>Phone Number</label><input name="phone" type="tel" required></div>
+      <div class="group"><label>National ID</label><input name="nationalId" required></div>
+      
+      <div class="calc">
+        <label>Loan Amount (USD)</label>
+        <div class="amount" id="display">USD 500</div>
+        <input id="slider" name="loanAmount" type="range" min="500" max="50000" step="500" value="500">
+      </div>
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
+      <div class="group">
+        <label>Employment Status</label>
+        <select name="employment" required>
+          <option>Employed</option><option>Self-employed</option><option>Business owner</option><option>Unemployed</option>
+        </select>
+      </div>
 
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 24px 16px;
-      position: relative;
-      overflow-x: hidden;
-    }
+      <div class="group"><label>Monthly Net Income (USD)</label><input name="income" type="number" min="0" required></div>
 
-    /* Animated Ambient Lights */
-    body::before, body::after {
-      content: '';
-      position: absolute;
-      width: 500px;
-      height: 500px;
-      border-radius: 50%;
-      filter: blur(140px);
-      z-index: 0;
-      pointer-events: none;
-    }
-    body::before {
-      background: radial-gradient(circle, rgba(0, 230, 118, 0.15), transparent 70%);
-      top: -150px;
-      left: -150px;
-    }
-    body::after {
-      background: radial-gradient(circle, rgba(0, 242, 254, 0.15), transparent 70%);
-      bottom: -150px;
-      right: -150px;
-    }
+      <div class="group">
+        <label>Repayment Timeline</label>
+        <select name="repayment" required>
+          <option>1 month</option><option>3 months</option><option>6 months</option><option>12 months</option><option>24 months</option>
+        </select>
+      </div>
 
-    .container {
-      width: 100%;
-      max-width: 580px;
-      position: relative;
-      z-index: 1;
-    }
+      <div class="terms">
+        <input type="checkbox" id="terms" required>
+        <label for="terms">I agree to the credit review terms and conditions.</label>
+      </div>
 
-    /* Live Activity Ticker */
-    .live-ticker {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(0, 230, 118, 0.2);
-      backdrop-filter: blur(12px);
-      padding: 10px 16px;
-      border-radius: 50px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    }
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      background-color: var(--primary-green);
-      border-radius: 50%;
-      box-shadow: 0 0 10px var(--primary-green);
-      animation: pulse 1.8s infinite;
-    }
-    @keyframes pulse {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7); }
-      70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(0, 230, 118, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
-    }
+      <button type="submit" id="btn">Continue to Verification</button>
+    </form>
+  </div>
+</div>
 
-    /* Header Glass Card */
-    .header-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      backdrop-filter: blur(20px);
-      border-radius: 20px;
-      padding: 20px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      position: relative;
-      overflow: hidden;
-    }
-    .header-card::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: linear-gradient(90deg, var(--primary-green), var(--accent-cyan));
-    }
-    .brand-logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-    .brand-logo .quick { color: var(--text-main); }
-    .brand-logo .cash {
-      background: linear-gradient(135deg, var(--primary-green), var(--accent-cyan));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .brand-badge {
-      background: rgba(0, 230, 118, 0.1);
-      border: 1px solid rgba(0, 230, 118, 0.3);
-      color: var(--primary-green);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .user-profile {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .user-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #1e293b, #0f172a);
-      border: 1px solid var(--card-border);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: var(--accent-cyan);
-    }
+<script>
+  const slider = document.getElementById('slider');
+  const display = document.getElementById('display');
+  slider.oninput = () => display.textContent = 'USD ' + Number(slider.value).toLocaleString();
 
-    /* Main Form Area */
-    main {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      backdrop-filter: blur(24px);
-      border-radius: 24px;
-      padding: 32px 28px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  document.getElementById('form').onsubmit = async (e) => {
+    e.preventDefault();
+    const f = e.target, btn = document.getElementById('btn');
+    const data = {
+      full_name: f.fullName.value.trim(),
+      phone: f.phone.value.trim(),
+      national_id: f.nationalId.value.trim(),
+      loan_amount: Number(f.loanAmount.value),
+      employment_status: f.employment.value,
+      monthly_income: Number(f.income.value),
+      repayment_period: f.repayment.value
+    };
+    btn.disabled = true; btn.textContent = 'Submitting...';
+    try {
+      const res = await fetch('https://quickcash-backend.doviaskipmoi.workers.dev/applications', {
+        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.message || 'Failed');
+      sessionStorage.setItem('applicationId', json.application_id);
+      sessionStorage.setItem('applicationPhone', data.phone);
+      location.href = 'verify.html';
+    } catch(err) {
+      alert(err.message || 'Error occurred');
+      btn.disabled = false; btn.textContent = 'Continue to Verification';
     }
-
-    .form-header {
-      margin-bottom: 24px;
-    }
-    .form-header h2 {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      background: linear-gradient(180deg, #ffffff, #cbd5e1);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .form-header p {
-      color: var(--text-muted);
-      font-size: 14px;
-    }
-
-    .input-group {
-      margin-bottom: 20px;
-      position: relative;
-    }
-    .input-group label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
-    .input-wrapper {
-      position: relative;
-    }
-    .input-wrapper svg {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 18px;
-      height: 18px;
-      color: var(--text-dim);
-      transition: color 0.3s ease;
-    }
-    input, select {
-      width: 100%;
-      padding: 14px 14px 14px 44px;
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      color: var(--text-main);
-      font-size: 15px;
-      outline: none;
-      transition: all 0.3s ease;
-    }
-    input:focus, select:focus {
-      border-color: var(--primary-green);
-      box-shadow: 0 0 15px var(--primary-green-glow);
-    }
-    input:focus + svg, select:focus + svg {
-      color: var(--primary-green);
-    }
-
-    /* Calculator & Range Styling */
-    .calculator-box {
-      background: rgba(2, 6, 23, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 24px;
-    }
-    .amount-display-container {
-      text-align: center;
-      margin-bottom: 16px;
-    }
-    .amount-label {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-dim);
-    }
-    .amount-value {
-      font-size: 38px;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--primary-green), var(--accent-cyan));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin: 4px 0;
-    }
-
-    /* Range Slider Styling */
-    input[type="range"] {
-      padding: 0;
-      height: 8px;
-      -webkit-appearance: none;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
+  };
+</script>
+</body>
+</html>
