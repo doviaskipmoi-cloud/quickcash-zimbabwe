@@ -3,277 +3,272 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quick Cash Zimbabwe | Loan Application</title>
+  <title>Quick Cash Zimbabwe | AI Loan Application</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
-    * { box-sizing: border-box; }
-    body {
+    :root {
+      --bg-dark: #070b12;
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary-green: #00e676;
+      --primary-green-glow: rgba(0, 230, 118, 0.35);
+      --accent-cyan: #00f2fe;
+      --accent-blue: #4facfe;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --navy-deep: #020617;
+      --danger-red: #ff4757;
+      --gold-star: #ffc107;
+    }
+
+    * {
+      box-sizing: border-box;
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
-      color: #17243a;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      padding: 20px 0;
-    }
-    .wrapper {
-      width: 100%;
-      max-width: 550px;
-    }
-    
-    /* Header Brand Card Style */
-    .brand-card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      padding: 24px 16px;
       position: relative;
-      overflow: hidden;
-      padding: 24px;
+      overflow-x: hidden;
+    }
+
+    /* Animated Ambient Lights */
+    body::before, body::after {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      filter: blur(140px);
+      z-index: 0;
+      pointer-events: none;
+    }
+    body::before {
+      background: radial-gradient(circle, rgba(0, 230, 118, 0.15), transparent 70%);
+      top: -150px;
+      left: -150px;
+    }
+    body::after {
+      background: radial-gradient(circle, rgba(0, 242, 254, 0.15), transparent 70%);
+      bottom: -150px;
+      right: -150px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 580px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Live Activity Ticker */
+    .live-ticker {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(0, 230, 118, 0.2);
+      backdrop-filter: blur(12px);
+      padding: 10px 16px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--primary-green);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--primary-green);
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(0, 230, 118, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+    }
+
+    /* Header Glass Card */
+    .header-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 20px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 25px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
     }
-    .brand-card::after {
+    .header-card::after {
       content: '';
       position: absolute;
       bottom: 0;
       left: 0;
-      right: 0;
-      height: 4px;
-      background: #10a343; /* Green Accent Bar */
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-green), var(--accent-cyan));
     }
     .brand-logo {
-      font-size: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 22px;
       font-weight: 800;
       letter-spacing: -0.5px;
     }
-    .brand-logo span.primary { color: #002D62; } /* Navy Blue */
-    .brand-logo span.accent { color: #E31B23; }  /* Red Accent */
-    
-    .user-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
+    .brand-logo .quick { color: var(--text-main); }
+    .brand-logo .cash {
+      background: linear-gradient(135deg, var(--primary-green), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .user-icon {
-      width: 36px;
-      height: 36px;
-      background: #e6edf8;
+    .brand-badge {
+      background: rgba(0, 230, 118, 0.1);
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      color: var(--primary-green);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border: 1px solid var(--card-border);
       display: flex;
       justify-content: center;
       align-items: center;
-      color: #002D62;
-      margin-bottom: 4px;
-    }
-    .user-icon svg {
-      width: 20px;
-      height: 20px;
-      fill: currentColor;
-    }
-    .welcome-text {
-      font-size: 13px;
-      font-weight: bold;
-      color: #333;
+      color: var(--accent-cyan);
     }
 
-    /* Main Form Card */
+    /* Main Form Area */
     main {
-      background: white;
-      padding: 28px;
-      border-radius: 14px;
-      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(24px);
+      border-radius: 24px;
+      padding: 32px 28px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
     }
-    h2 {
-      color: #002D62;
-      margin-top: 0;
+
+    .form-header {
+      margin-bottom: 24px;
     }
-    label {
-      display: block;
-      margin: 17px 0 7px;
-      font-weight: bold;
-      color: #002D62;
+    .form-header h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      background: linear-gradient(180deg, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .form-header p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .input-group label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .input-wrapper {
+      position: relative;
+    }
+    .input-wrapper svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: var(--text-dim);
+      transition: color 0.3s ease;
     }
     input, select {
       width: 100%;
-      padding: 13px;
-      border: 1px solid #ccd3df;
-      border-radius: 7px;
-      font-size: 16px;
-      color: #17243a;
+      padding: 14px 14px 14px 44px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      color: var(--text-main);
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s ease;
     }
     input:focus, select:focus {
-      outline: 2px solid #10a343;
-      border-color: transparent;
+      border-color: var(--primary-green);
+      box-shadow: 0 0 15px var(--primary-green-glow);
     }
-    input[type="range"] { padding: 0; accent-color: #10a343; }
-    .amount {
+    input:focus + svg, select:focus + svg {
+      color: var(--primary-green);
+    }
+
+    /* Calculator & Range Styling */
+    .calculator-box {
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .amount-display-container {
       text-align: center;
-      font-size: 27px;
-      font-weight: bold;
-      color: #10a343;
-      margin: 15px;
+      margin-bottom: 16px;
     }
-    button {
-      width: 100%;
-      padding: 15px;
-      margin-top: 22px;
-      border: 0;
-      border-radius: 8px;
-      background: #10a343;
-      color: white;
-      font-size: 17px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s ease;
+    .amount-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
     }
-    button:hover {
-      background: #0d8737;
+    .amount-value {
+      font-size: 38px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary-green), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 4px 0;
     }
-    button:disabled {
-      background: #93c5fd;
-      cursor: not-allowed;
-    }
-    .terms {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .terms input { width: auto; margin-top: 3px; accent-color: #10a343; }
-    .terms label { margin: 0; font-weight: normal; color: #555; }
-  </style>
-</head>
-<body>
 
-<div class="wrapper">
-  <!-- Brand Header Card -->
-  <div class="brand-card">
-    <div class="brand-logo">
-      <span class="primary">Quick Cash</span> <span class="accent">Zimbabwe</span>
-    </div>
-    <div class="user-section">
-      <div class="user-icon">
-        <svg viewBox="0 0 24 24">
-          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-        </svg>
-      </div>
-      <span class="welcome-text">Welcome</span>
-    </div>
-  </div>
-
-  <main>
-    <h2>Loan Application</h2>
-    <form id="loanForm">
-      <label>Full Name</label>
-      <input name="fullName" required>
-
-      <label>Phone Number</label>
-      <input name="phone" type="tel" required>
-
-      <label>National ID Number</label>
-      <input name="nationalId" required>
-
-      <label>Loan Amount (USD)</label>
-      <div class="amount" id="amountDisplay">USD 500</div>
-      <input id="loanAmount" name="loanAmount" type="range"
-        min="500" max="50000" step="500" value="500">
-
-      <label>Employment Status</label>
-      <select name="employment" required>
-        <option value="">Select employment status</option>
-        <option>Employed</option>
-        <option>Self-employed</option>
-        <option>Unemployed</option>
-        <option>Business owner</option>
-      </select>
-
-      <label>Monthly Net Income (USD)</label>
-      <input name="income" type="number" min="0" required>
-
-      <label>Repayment Timeline</label>
-      <select name="repayment" required>
-        <option value="">Select repayment period</option>
-        <option>1 month</option>
-        <option>3 months</option>
-        <option>6 months</option>
-        <option>9 months</option>
-        <option>12 months</option>
-        <option>18 months</option>
-        <option>24 months</option>
-      </select>
-
-      <div class="terms">
-        <input type="checkbox" id="terms" required>
-        <label for="terms">I have read and accepted the loan terms and conditions.</label>
-      </div>
-
-      <button type="submit">Continue</button>
-    </form>
-  </main>
-</div>
-
-<script>
-  const slider = document.getElementById("loanAmount");
-  const display = document.getElementById("amountDisplay");
-
-  slider.addEventListener("input", () => {
-    display.textContent = "USD " +
-      Number(slider.value).toLocaleString("en-US");
-  });
-
-  document.getElementById("loanForm").addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const form = event.target;
-    const button = form.querySelector('button[type="submit"]');
-
-    const application = {
-      full_name: form.elements["fullName"].value.trim(),
-      phone: form.elements["phone"].value.trim(),
-      national_id: form.elements["nationalId"].value.trim(),
-      loan_amount: Number(form.elements["loanAmount"].value),
-      employment_status: form.elements["employment"].value,
-      monthly_income: Number(form.elements["income"].value),
-      repayment_period: form.elements["repayment"].value
-    };
-
-    button.disabled = true;
-    button.textContent = "Submitting...";
-
-    try {
-      const response = await fetch(
-        "https://quickcash-backend.doviaskipmoi.workers.dev/applications",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(application)
-        }
-      );
-
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.message || "Application failed.");
-      }
-
-      sessionStorage.setItem("applicationId", result.application_id);
-      sessionStorage.setItem("applicationPhone", application.phone);
-
-      alert("Application submitted successfully!");
-
-      window.location.href = "verify.html";
-
-    } catch (error) {
-      alert(error.message || "Unable to submit. Please try again.");
-      button.disabled = false;
-      button.textContent = "Continue";
-    }
-  });
-</script>
-
-</body>
-</html>
+    /* Range Slider Styling */
+    input[type="range"] {
+      padding: 0;
+      height: 8px;
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
