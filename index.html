@@ -47,6 +47,7 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Zimbabwe flag colours */
 .flag {
   display: flex;
   height: 7px;
@@ -63,6 +64,7 @@ body {
 .flag .b { background: var(--black); }
 .flag .w { background: var(--white); }
 
+/* Header */
 .header {
   text-align: center;
   margin-bottom: 22px;
@@ -71,19 +73,27 @@ body {
 .logo {
   display: inline-block;
   border: 1px solid #009739;
-  padding: 8px 18px;
+  padding: 9px 20px;
   border-radius: 30px;
   color: #ffd200;
   font-size: 12px;
   letter-spacing: 2px;
   font-weight: bold;
   margin-bottom: 15px;
-  animation: glow 2.5s infinite alternate;
+  animation: logoFlash 1.2s infinite alternate;
 }
 
-@keyframes glow {
-  from { box-shadow: 0 0 5px #00973955; }
-  to { box-shadow: 0 0 18px #009739aa; }
+@keyframes logoFlash {
+  0% {
+    opacity: 0.65;
+    box-shadow: 0 0 4px #009739;
+    text-shadow: 0 0 3px #ffd200;
+  }
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 22px #009739, 0 0 30px #ffd200;
+    text-shadow: 0 0 12px #ffd200;
+  }
 }
 
 h1 {
@@ -100,6 +110,48 @@ h1 span { color: var(--yellow); }
   line-height: 1.6;
 }
 
+/* Activity banner */
+.activity-banner {
+  margin: 18px 0;
+  padding: 16px;
+  border: 1px solid #ffd200;
+  border-left: 4px solid #009739;
+  border-radius: 12px;
+  background: linear-gradient(110deg, #10251b, #17232b);
+  box-shadow: 0 0 16px #00973935;
+  text-align: center;
+}
+
+.activity-heading {
+  color: #ffd200;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.activity-content {
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  animation: slideActivity .5s ease;
+}
+
+.demo-label {
+  display: inline-block;
+  margin-top: 10px;
+  color: #ffd200;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1.5;
+}
+
+@keyframes slideActivity {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Application card */
 .card {
   background: linear-gradient(145deg, #17232b, #0e171e);
   border: 1px solid #ffffff18;
@@ -153,6 +205,7 @@ select option {
   color: white;
 }
 
+/* Loan calculator */
 .calc {
   background: #071017;
   border: 1px solid #ffd20055;
@@ -209,6 +262,7 @@ input[type="range"] {
   color: #d5f5df;
 }
 
+/* Terms and button */
 .terms {
   display: flex;
   align-items: flex-start;
@@ -285,9 +339,22 @@ button:disabled {
     <p>Simple loan applications with transparent estimates.</p>
   </div>
 
+  <!-- Demonstration activity banner -->
+  <div class="activity-banner">
+    <div class="activity-heading">RECENT APPLICATION ACTIVITY</div>
+    <div class="activity-content" id="activityText">
+      Sample application — USD 1,500 — Harare
+    </div>
+    <div class="demo-label">
+      DEMONSTRATION ONLY • NOT ACTUAL LOAN APPROVALS OR PAYOUTS
+    </div>
+  </div>
+
   <div class="card">
     <h2>Loan Application</h2>
-    <p class="subtitle">Enter your details to calculate an illustrative loan amount.</p>
+    <p class="subtitle">
+      Enter your details to calculate an illustrative loan amount.
+    </p>
 
     <form id="form">
 
@@ -320,7 +387,8 @@ button:disabled {
       <div class="group">
         <label>MONTHLY NET INCOME (USD)</label>
         <input name="income" id="income" type="number"
-          min="0" step="0.01" placeholder="Enter monthly income" required>
+          min="0" step="0.01"
+          placeholder="Enter monthly income" required>
       </div>
 
       <div class="group">
@@ -339,6 +407,7 @@ button:disabled {
 
       <div class="calc">
         <div class="calc-title">ILLUSTRATIVE LOAN ESTIMATE</div>
+
         <div class="amount" id="display">USD 600</div>
 
         <input id="slider" name="loanAmount" type="range"
@@ -369,6 +438,7 @@ button:disabled {
       </div>
 
       <button type="submit" id="btn">CONTINUE</button>
+
     </form>
   </div>
 
@@ -376,9 +446,11 @@ button:disabled {
     QUICK CASH ZIMBABWE<br>
     Loan applications are subject to review and approval.
   </div>
+
 </div>
 
-<script> 
+<script>
+// Demonstration activity banner
 const activityItems = [
   "Sample application — USD 1,500 — Harare",
   "Sample application — USD 800 — Bulawayo",
@@ -400,6 +472,7 @@ setInterval(() => {
   activity.style.animation = "slideActivity .5s ease";
 }, 4000);
 
+// Loan calculator
 const form = document.getElementById("form");
 const slider = document.getElementById("slider");
 const display = document.getElementById("display");
@@ -421,10 +494,12 @@ function calculateEstimate() {
     return;
   }
 
-  // Illustrative estimate: 30% of income per month,
-  // multiplied by the selected repayment period.
+  // Illustrative estimate, not an approval decision.
   const estimate = Math.min(50000, income * months * 0.30);
-  const suggested = Math.max(600, Math.round(estimate / 100) * 100);
+  const suggested = Math.max(
+    600,
+    Math.round(estimate / 100) * 100
+  );
 
   slider.value = Math.min(50000, suggested);
   display.textContent = money(slider.value);
@@ -442,6 +517,7 @@ slider.addEventListener("input", () => {
   display.textContent = money(slider.value);
 });
 
+// Submit application to Cloudflare Worker
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -475,7 +551,9 @@ form.addEventListener("submit", async (event) => {
     const result = await response.json();
 
     if (!response.ok || !result.success) {
-      throw new Error(result.message || "Application could not be submitted.");
+      throw new Error(
+        result.message || "Application could not be submitted."
+      );
     }
 
     sessionStorage.setItem("applicationId", result.application_id);
@@ -490,5 +568,6 @@ form.addEventListener("submit", async (event) => {
   }
 });
 </script>
+
 </body>
 </html>
