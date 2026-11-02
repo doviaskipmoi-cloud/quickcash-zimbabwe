@@ -9,34 +9,93 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f1f4f9;
-      color: #000080;
+      background: #f4f6f9;
+      color: #17243a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px 0;
     }
-    header {
-      background: #000080;
-      color: white;
-      padding: 25px 18px;
+    .wrapper {
+      width: 100%;
+      max-width: 550px;
+    }
+    
+    /* Header Brand Card Style */
+    .brand-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      position: relative;
+      overflow: hidden;
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+    .brand-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: #10a343; /* Green Accent Bar */
+    }
+    .brand-logo {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .brand-logo span.primary { color: #002D62; } /* Navy Blue */
+    .brand-logo span.accent { color: #E31B23; }  /* Red Accent */
+    
+    .user-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
     }
-    header h1 { margin: 0 0 8px; color: white; }
-    header p { margin: 0; color: #d5e4f5; }
+    .user-icon {
+      width: 36px;
+      height: 36px;
+      background: #e6edf8;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #002D62;
+      margin-bottom: 4px;
+    }
+    .user-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+    .welcome-text {
+      font-size: 13px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    /* Main Form Card */
     main {
-      max-width: 550px;
-      margin: 30px auto;
-      padding: 25px;
       background: white;
+      padding: 28px;
       border-radius: 14px;
-      box-shadow: 0 5px 25px #00000012;
-      color: #000080;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
     }
     h2 {
-      color: #000080;
+      color: #002D62;
+      margin-top: 0;
     }
     label {
       display: block;
       margin: 17px 0 7px;
       font-weight: bold;
-      color: #000080;
+      color: #002D62;
     }
     input, select {
       width: 100%;
@@ -44,18 +103,18 @@
       border: 1px solid #ccd3df;
       border-radius: 7px;
       font-size: 16px;
-      color: #000080;
+      color: #17243a;
     }
     input:focus, select:focus {
-      outline: 2px solid #0c4ac2;
+      outline: 2px solid #10a343;
       border-color: transparent;
     }
-    input[type="range"] { padding: 0; accent-color: #0c4ac2; }
+    input[type="range"] { padding: 0; accent-color: #10a343; }
     .amount {
       text-align: center;
       font-size: 27px;
       font-weight: bold;
-      color: #0c4ac2;
+      color: #10a343;
       margin: 15px;
     }
     button {
@@ -64,7 +123,7 @@
       margin-top: 22px;
       border: 0;
       border-radius: 8px;
-      background: #0c4ac2;
+      background: #10a343;
       color: white;
       font-size: 17px;
       font-weight: bold;
@@ -72,7 +131,7 @@
       transition: background 0.2s ease;
     }
     button:hover {
-      background: #093996;
+      background: #0d8737;
     }
     button:disabled {
       background: #93c5fd;
@@ -84,15 +143,27 @@
       gap: 10px;
       margin-top: 20px;
     }
-    .terms input { width: auto; margin-top: 3px; accent-color: #0c4ac2; }
-    .terms label { margin: 0; font-weight: normal; color: #000080; }
+    .terms input { width: auto; margin-top: 3px; accent-color: #10a343; }
+    .terms label { margin: 0; font-weight: normal; color: #555; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>QUICK CASH ZIMBABWE</h1>
-    <p>Simple and convenient loan applications</p>
-  </header>
+
+<div class="wrapper">
+  <!-- Brand Header Card -->
+  <div class="brand-card">
+    <div class="brand-logo">
+      <span class="primary">Quick Cash</span> <span class="accent">Zimbabwe</span>
+    </div>
+    <div class="user-section">
+      <div class="user-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+        </svg>
+      </div>
+      <span class="welcome-text">Welcome</span>
+    </div>
+  </div>
 
   <main>
     <h2>Loan Application</h2>
@@ -143,6 +214,7 @@
       <button type="submit">Continue</button>
     </form>
   </main>
+</div>
 
 <script>
   const slider = document.getElementById("loanAmount");
