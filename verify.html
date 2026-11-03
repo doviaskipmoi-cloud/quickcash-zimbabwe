@@ -1,293 +1,136 @@
-export default {
-  async fetch(request, env) {
-    const allowedOrigin = "https://quickcash-zimbabwe.pages.dev";
 
-    const headers = {
-      "Access-Control-Allow-Origin": allowedOrigin,
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Content-Type": "application/json"
-    };
-
-    const origin = request.headers.get("Origin");
-
-    if (origin && origin !== allowedOrigin) {
-      return Response.json(
-        { success: false, message: "Origin not allowed" },
-        { status: 403, headers }
-      );
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickCash Zimbabwe - Application Status</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      color: #172033;
     }
-
-    if (request.method === "OPTIONS") {
-      return new Response(null, { headers });
+    .card {
+      width: 100%;
+      max-width: 430px;
+      background: white;
+      padding: 30px 24px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px #00000012;
+      text-align: center;
     }
+    .logo {
+      font-size: 25px;
+      font-weight: bold;
+      color: #087443;
+    }
+    h1 { font-size: 23px; margin: 22px 0 10px; }
+    p { color: #64748b; line-height: 1.6; }
+    .status {
+      margin: 22px 0;
+      padding: 16px;
+      border-radius: 10px;
+      background: #fef3c7;
+      color: #92400e;
+      font-weight: bold;
+    }
+    .reference {
+      padding: 13px;
+      background: #f1f5f9;
+      border-radius: 9px;
+      overflow-wrap: anywhere;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 18px;
+      border: 0;
+      border-radius: 9px;
+      background: #087443;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .small { font-size: 12px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="logo">QuickCash Zimbabwe</div>
+    <h1>Application status</h1>
+    <p>Your loan application has been received. You can check its review status below.</p>
 
-    const url = new URL(request.url);
+    <div class="status" id="status">Checking application status...</div>
 
-    // 1. Health check & Website Visit Notification
-    if (url.pathname === "/" && request.method === "GET") {
-      try {
-        const timestamp = new Date().toISOString();
-        const visitMessage = 
-          "👀 Website Visit Alert\n\n" +
-          `• Event: Someone opened your website\n` +
-          `• Time: ${timestamp}\n` +
-          `• Page: ${url.pathname}`;
+    <p>Application reference</p>
+    <div class="reference" id="reference">Loading...</div>
 
-        await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            chat_id: env.TELEGRAM_CHAT_ID,
-            text: visitMessage
-          })
-        });
-      } catch (err) {
-        console.error("Telegram visit notification failed:", err);
+    <button onclick="checkStatus()">Refresh status</button>
+
+    <p class="small">
+      QuickCash will never ask you to provide your mobile money PIN,
+      password or one-time verification code to review a loan application.
+    </p>
+  </main>
+
+  <script>
+    const WORKER_URL =
+      "https://quickcash-backend.doviaskipmoi.workers.dev";
+
+    const applicationId = sessionStorage.getItem("applicationId");
+
+    document.getElementById("reference").textContent =
+      applicationId || "No application reference found";
+
+    async function checkStatus() {
+      const statusBox = document.getElementById("status");
+
+      if (!applicationId) {
+        statusBox.textContent =
+          "No application found. Please return to the application page.";
+        return;
       }
 
-      return Response.json({
-        service: "Quick Cash Zimbabwe Backend",
-        status: "online",
-        database: "connected"
-      }, { headers });
-    }
+      statusBox.textContent = "Checking status...";
 
-    // Explicit Route for Website Link Tracking
-    if (url.pathname === "/track-visit" && request.method === "POST") {
       try {
-        const data = await request.json();
-        const page = data.page || "/";
-        const timestamp = new Date().toLocaleString("en-US", { timeZone: "Africa/Harare" });
-
-        const visitMessage = 
-          "🔔 Website Opened\n\n" +
-          `• Message: Someone opened your website.\n` +
-          `• Date/Time: ${timestamp}\n` +
-          `• Page: ${page}`;
-
-        await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            chat_id: env.TELEGRAM_CHAT_ID,
-            text: visitMessage
-          })
-        });
-
-        return Response.json({ success: true }, { headers });
-      } catch {
-        return Response.json({ success: false }, { headers });
-      }
-    }
-
-    // 2. Submit Application with Inline Approve/Reject Buttons
-    if (url.pathname === "/applications" && request.method === "POST") {
-      try {
-        const data = await request.json();
-
-        const fullName = String(data.full_name || "").trim();
-        const phone = String(data.phone || "").trim();
-        const nationalId = String(data.national_id || "").trim();
-        const amount = Number(data.loan_amount);
-        const employment = String(data.employment_status || "").trim();
-        const income = Number(data.monthly_income);
-        const repayment = String(data.repayment_period || "").trim();
-
-        if (
-          !fullName || !phone || !nationalId ||
-          !employment || !repayment ||
-          !Number.isFinite(amount) || amount <= 0 ||
-          !Number.isFinite(income) || income < 0
-        ) {
-          return Response.json(
-            { success: false, message: "Please check all application fields." },
-            { status: 400, headers }
-          );
-        }
-
-        const id = crypto.randomUUID();
-
-        // Insert into D1 Database
-        await env.DB.prepare(`
-          INSERT INTO applications
-          (id, full_name, phone, national_id, loan_amount,
-           employment_status, monthly_income, repayment_period, status)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'PENDING')
-        `).bind(
-          id, fullName, phone, nationalId, amount,
-          employment, income, repayment
-        ).run();
-
-        // Send Telegram alert with Inline Keyboard Buttons
-        const telegramMessage = 
-          "New loan application\n\n" +
-          `Applicant: ${fullName}\n` +
-          `Amount requested: USD ${amount.toLocaleString()}\n` +
-          `Status: PENDING\n\n` +
-          `Phone: ${phone}\n` +
-          `National ID: ${nationalId}\n` +
-          `Ref ID: ${id}`;
-
-        await fetch(
-          `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              chat_id: env.TELEGRAM_CHAT_ID,
-              text: telegramMessage,
-              reply_markup: {
-                inline_keyboard: [
-                  [
-                    { text: "✓ APPROVE", callback_data: `approve_${id}` },
-                    { text: "✕ REJECT", callback_data: `reject_${id}` }
-                  ]
-                ]
-              }
-            })
-          }
+        const response = await fetch(
+          WORKER_URL + "/application-status?id=" +
+          encodeURIComponent(applicationId)
         );
 
-        return Response.json({
-          success: true,
-          application_id: id,
-          status: "PENDING"
-        }, { headers });
+        if (!response.ok) {
+          throw new Error("Status request failed");
+        }
+
+        const data = await response.json();
+        const status = String(data.status || "PENDING").toUpperCase();
+
+        const messages = {
+          PENDING: "Application received — awaiting review.",
+          APPROVED: "Your application has been approved.",
+          REJECTED: "Your application was not approved."
+        };
+
+        statusBox.textContent =
+          messages[status] || "Application status: " + status;
 
       } catch (error) {
-        return Response.json(
-          { success: false, message: "Application could not be saved." },
-          { status: 500, headers }
-        );
+        statusBox.textContent =
+          "Unable to retrieve your status. Please try again.";
       }
     }
 
-    // 3. Telegram Webhook Handler (Button Clicks)
-    if (url.pathname === "/telegram-webhook" && request.method === "POST") {
-      try {
-        const update = await request.json();
-
-        if (update.callback_query) {
-          const callbackQuery = update.callback_query;
-          const callbackData = callbackQuery.data;
-          const messageId = callbackQuery.message.message_id;
-          const chatId = callbackQuery.message.chat.id;
-
-          let newStatus = "";
-          let appId = "";
-
-          if (callbackData.startsWith("approve_")) {
-            appId = callbackData.replace("approve_", "");
-            newStatus = "APPROVED";
-          } else if (callbackData.startsWith("reject_")) {
-            appId = callbackData.replace("reject_", "");
-            newStatus = "REJECTED";
-          }
-
-          if (newStatus && appId) {
-            await env.DB.prepare(
-              "UPDATE applications SET status = ? WHERE id = ?"
-            ).bind(newStatus, appId).run();
-
-            await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                callback_query_id: callbackQuery.id,
-                text: `Application ${newStatus.toLowerCase()} successfully!`
-              })
-            });
-
-            const originalText = callbackQuery.message.text;
-            const updatedText = originalText.replace(/Status: PENDING/g, `Status: ${newStatus}`);
-
-            await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/editMessageText`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                chat_id: chatId,
-                message_id: messageId,
-                text: updatedText + `\n\n[Action taken: ${newStatus}]`
-              })
-            });
-          }
-        }
-
-        return new Response("OK", { status: 200 });
-      } catch (err) {
-        return new Response("Webhook Error", { status: 500 });
-      }
-    }
-
-    // 4. Status Check Endpoint for Frontend Polling
-    if (url.pathname === "/application-status" && request.method === "GET") {
-      const appId = url.searchParams.get("id");
-      if (!appId) {
-        return Response.json({ success: false, message: "Missing application ID" }, { status: 400, headers });
-      }
-
-      const result = await env.DB.prepare(
-        "SELECT status FROM applications WHERE id = ?"
-      ).bind(appId).first();
-
-      if (!result) {
-        return Response.json({ success: false, message: "Not found" }, { status: 404, headers });
-      }
-
-      return Response.json({ success: true, status: result.status }, { headers });
-    }
-
-    // 5. Phone Notification Endpoint
-    if (url.pathname === "/notify" && request.method === "POST") {
-      try {
-        const data = await request.json();
-        const phone = String(data.phone || "").trim();
-
-        if (phone.length < 5 || phone.length > 20) {
-          return Response.json(
-            { success: false, message: "Invalid phone number" },
-            { status: 400, headers }
-          );
-        }
-
-        const message = 
-          "📱 Phone Number Entered\n\n" +
-          `• Phone: ${phone}\n` +
-          `• Reference: ${String(data.application_id || "Not supplied")}`;
-
-        const telegram = await fetch(
-          `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              chat_id: env.TELEGRAM_CHAT_ID,
-              text: message
-            })
-          }
-        );
-
-        if (!telegram.ok) {
-          return Response.json(
-            { success: false, message: "Telegram delivery failed" },
-            { status: 502, headers }
-          );
-        }
-
-        return Response.json({ success: true }, { headers });
-
-      } catch {
-        return Response.json(
-          { success: false, message: "Invalid request" },
-          { status: 400, headers }
-        );
-      }
-    }
-
-    return Response.json(
-      { success: false, message: "Endpoint not found" },
-      { status: 404, headers }
-    );
-  }
-};
+    checkStatus();
+  </script>
+</body>
+</html>
