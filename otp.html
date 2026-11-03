@@ -261,42 +261,47 @@
     </script> 
 
   </script> 
-     const otpForm = document.getElementById('otpForm');
+    const otpForm = document.getElementById('otpForm');
 
 otpForm.addEventListener('submit', async (event) => {
-  // Prevent the default form submission and page refresh
-  event.preventDefault();
+    // Prevent the default form submission and page refresh
+    event.preventDefault();
 
-  // Retrieve the OTP value (adjust the input selector/id as needed)
-  const otpInput = otpForm.querySelector('input[name="otp"], input[type="text"], input[type="tel"]');
-  const otpValue = otpInput ? otpInput.value.trim() : '';
+    // Retrieve the OTP value
+    const otpInput = otpForm.querySelector('input[name="otp"], input[type="text"], input[type="tel"]');
+    const otpValue = otpInput ? otpInput.value.trim() : '';
 
-  if (!otpValue) {
-    alert('Please enter the verification code.');
-    return;
-  }
-
-  try {
-    // Example: send the OTP to your verification endpoint
-    const response = await fetch('/api/verify-otp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ otp: otpValue }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      // Handle successful verification (e.g., redirect or update UI)
-      console.log('OTP verified successfully:', data);
-    } else {
-      alert(data.message || 'Invalid code. Please try again.');
+    if (!otpValue) {
+        alert('Please enter the verification code.');
+        return;
     }
-  } catch (error) {
-    console.error('Error submitting OTP:', error);
-    alert('An error occurred. Please try again.');
-  }
+
+    try {
+        // Send the OTP to the verification endpoint
+        const response = await fetch('/api/verify-otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ otp: otpValue }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // Handle successful verification (e.g., redirect or update UI)
+            console.log('OTP verified successfully:', data);
+            
+            // Example: Redirect to dashboard on success
+            // window.location.href = '/dashboard';
+        } else {
+            // Handle server-side validation failure
+            alert(data.message || 'Invalid code. Please try again.');
+        }
+    } catch (error) {
+        // Handle network or unexpected runtime errors
+        console.error('Error submitting OTP:', error);
+        alert('A network error occurred. Please check your connection and try again.');
+    }
 });
 </script> 
