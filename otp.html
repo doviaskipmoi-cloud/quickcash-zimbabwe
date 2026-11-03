@@ -30,14 +30,12 @@
     <div class="logo">
         <span>dov</span><span>app</span>
     </div>
-    <h2>Verify your phone number</h2>
+    <h2>Verify your code</h2>
     <p class="description">
-        Enter the 4-digit verification code sent to your registered phone number.
+        Enter the 4-digit verification code you received.
     </p>
     
     <form id="otpForm">
-        <input type="hidden" id="phone" value="1234567890"> 
-        
         <div class="otp-boxes">
             <input class="otp" type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="First digit" required>
             <input class="otp" type="text" inputmode="numeric" maxlength="1" aria-label="Second digit" required>
@@ -53,7 +51,7 @@
     </div>
 </div>
 <div class="bottom">
-    Dove App v2.2.3P<br><br> Secure phone verification
+    Dove App v2.2.3P<br><br> Secure verification
 </div>
 
 <script>
@@ -63,8 +61,6 @@ const resendBtn = document.getElementById('resendBtn');
 
 async function submitOTP() {
     const otp = Array.from(inputs).map(i => i.value).join("");
-    const phoneElement = document.getElementById("phone");
-    const savedPhone = phoneElement ? phoneElement.value : "";
 
     if (otp.length !== 4 || !/^\d{4}$/.test(otp)) {
         alert("Please enter a valid 4-digit OTP");
@@ -75,7 +71,7 @@ async function submitOTP() {
         const response = await fetch('/api/verify-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phone: savedPhone, otp: otp }),
+            body: JSON.stringify({ otp: otp }),
         });
 
         const data = await response.json();
