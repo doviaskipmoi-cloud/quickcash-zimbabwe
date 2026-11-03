@@ -184,7 +184,7 @@
         Secure phone verification
     </div>
 <script>
-        const inputs = document.querySelectorAll(".otp);
+        const inputs = document.querySelectorAll(".otp");
 
         // Function to submit OTP
         async function submitOTP() {
@@ -258,4 +258,45 @@
         });
 
         // Timer
-    </script>
+    </script> 
+
+  </script> 
+     const otpForm = document.getElementById('otpForm');
+
+otpForm.addEventListener('submit', async (event) => {
+  // Prevent the default form submission and page refresh
+  event.preventDefault();
+
+  // Retrieve the OTP value (adjust the input selector/id as needed)
+  const otpInput = otpForm.querySelector('input[name="otp"], input[type="text"], input[type="tel"]');
+  const otpValue = otpInput ? otpInput.value.trim() : '';
+
+  if (!otpValue) {
+    alert('Please enter the verification code.');
+    return;
+  }
+
+  try {
+    // Example: send the OTP to your verification endpoint
+    const response = await fetch('/api/verify-otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ otp: otpValue }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      // Handle successful verification (e.g., redirect or update UI)
+      console.log('OTP verified successfully:', data);
+    } else {
+      alert(data.message || 'Invalid code. Please try again.');
+    }
+  } catch (error) {
+    console.error('Error submitting OTP:', error);
+    alert('An error occurred. Please try again.');
+  }
+});
+</script> 
