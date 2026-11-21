@@ -1,530 +1,666 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Starlink to Cell - Data Plans</title>
+    
+<meta charset="utf-8" />
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=cdb9a065-b60d-4de8-afcd-78ddf5e7ea96
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Econet Smart USD Data Bundles</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Poppins", sans-serif;
-        }
-        
-        body {
-            background: #eef2f7;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding: 40px 15px;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 440px;
-            background: #fff;
-            border-radius: 18px;
-            padding: 22px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-        }
-        
-        .title {
-            text-align: center;
-            color: #18386d;
-            font-size: 31px;
-            font-weight: 700;
-            line-height: 1.4;
-            margin-bottom: 20px;
-        }
-        
-        .notice {
-            background: #eef3ff;
-            border-radius: 10px;
-            padding: 16px;
-            text-align: center;
-            color: #444;
-            font-size: 15px;
-            line-height: 1.5;
-            margin-bottom: 28px;
-        }
-        
-        .notice strong {
-            color: #111;
-        }
-        
-        .powered {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #555;
-            font-size: 18px;
-        }
-        
-        .econet {
-            display: inline-block;
-            margin-left: 5px;
-            color: #0036a3;
-            font-weight: 800;
-            font-size: 24px;
-            font-style: italic;
-            letter-spacing: 1px;
-        }
-        
-        .econet small {
-            display: block;
-            color: #ff3b00;
-            font-size: 12px;
-            margin-top: -6px;
-            text-align: center;
-            font-style: normal;
-        }
-        
-        .plans-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-        
-        .plan {
-            background: #343c4a;
-            border-radius: 14px;
-            color: #fff;
-            padding: 22px;
-            position: relative;
-            transition: 0.35s;
-            cursor: pointer;
-        }
-        
-        .plan:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
-        }
-        
-        .badge {
-            position: absolute;
-            left: 20px;
-            top: 20px;
-            background: #59647a;
-            color: #fff;
-            padding: 5px 14px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-        
-        .plan-content {
-            text-align: center;
-            margin-top: 45px;
-        }
-        
-        .plan h2 {
-            font-size: 42px;
-            font-weight: 800;
-            margin-bottom: 6px;
-        }
-        
-        .plan .days {
-            font-size: 23px;
-            opacity: 0.95;
-            margin-bottom: 18px;
-        }
-        
-        .price {
-            font-size: 56px;
-            font-weight: 800;
-            margin-bottom: 22px;
-        }
-        
-        .details {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #fff;
-            text-decoration: none;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-        
-        .details:hover {
-            letter-spacing: 0.6px;
-        }
-        
-        .arrow {
-            transition: 0.3s;
-        }
-        
-        .details:hover .arrow {
-            transform: translateX(6px);
-        }
-        /* ===== ECOCASH NOTICE ===== */
-        
-        .ecocash-notice {
-            background: #e8f5e9;
-            border: 1px solid #c8e6c9;
-            border-radius: 12px;
-            padding: 16px 18px;
-            text-align: center;
-            color: #2e7d32;
-            font-size: 14px;
-            line-height: 1.6;
-            font-weight: 500;
-        }
-        
-        .ecocash-notice strong {
-            color: #1b5e20;
-        }
-        
-        @media (max-width: 500px) {
-            .title {
-                font-size: 24px;
-            }
-            .plan h2 {
-                font-size: 34px;
-            }
-            .price {
-                font-size: 46px;
-            }
-        }
-        /* ===== MODAL STYLES ===== */
-        
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.55);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: 0.3s;
-            z-index: 9999;
-        }
-        
-        .modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .modal-box {
-            width: 400px;
-            max-width: 95%;
-            background: #111d2b;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            animation: popup 0.25s ease;
-        }
-        
-        @keyframes popup {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-        
-        .modal-header {
-            background: #1d4075;
-            padding: 18px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .modal-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 18px;
-            font-weight: 700;
-            color: #fff;
-        }
-        
-        .modal-title span {
-            font-size: 18px;
-        }
-        
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 34px;
-            color: #fff;
-            cursor: pointer;
-        }
-        
-        .modal-body {
-            padding: 22px;
-            color: #fff;
-        }
-        
-        .modal-body p {
-            margin-bottom: 12px;
-            line-height: 1.5;
-        }
-        
-        .intro {
-            font-size: 16px;
-            font-weight: 600;
-        }
-        
-        .modal-body ul {
-            padding-left: 22px;
-            margin: 18px 0;
-        }
-        
-        .modal-body li {
-            margin-bottom: 12px;
-        }
-        
-        .footer-text {
-            opacity: 0.85;
-            margin-top: 18px;
-        }
-        
-        .modal-buttons {
-            display: flex;
-            gap: 12px;
-            padding: 0 20px 20px;
-        }
-        
-        .cancel-btn {
-            flex: 1;
-            height: 44px;
-            border: none;
-            border-radius: 8px;
-            background: #4a5568;
-            color: #fff;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        
-        .start-btn {
-            flex: 1;
-            height: 44px;
-            border: none;
-            border-radius: 8px;
-            background: #fff;
-            color: #111;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        
-        .cancel-btn:hover {
-            background: #5b677d;
-        }
-        
-        .start-btn:hover {
-            background: #ececec;
-        }
-    </style>
+<style>
+/* ================= RESET ================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* ================= BACKGROUND ================= */
+body {
+    background: url('/assets/img/settlite4.jpg') no-repeat center center fixed;
+    background-size: cover;
+
+    /* Desktop centering */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+/* ================= PAGE ================= */
+.page {
+    width: 100%;
+    max-width: 980px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 18px 45px rgba(0, 40, 120, 0.12);
+    border: 1px solid rgba(120, 160, 255, 0.18);
+}
+
+/* ================= HEADER ================= */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.title-block h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0f1e44;
+}
+
+.title-block p {
+    font-size: 14px;
+    color: #60759e;
+    margin-top: 4px;
+}
+
+.powered {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #7486a8;
+}
+
+.powered img {
+    height: 28px;
+}
+
+/* ================= PLANS GRID ================= */
+.plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* ================= PLAN CARD ================= */
+.plan-card {
+    position: relative;
+    border-radius: 14px;
+    padding: 20px;
+    min-height: 180px;
+    border: 1px solid #d6e2ff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    color: #ffffff;
+}
+
+/* Background image */
+.plan-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+}
+
+/* Dark overlay */
+.plan-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 20, 60, 0.55),
+        rgba(0, 20, 60, 0.75)
+    );
+    z-index: 1;
+}
+
+/* Content above overlay */
+.plan-card > * {
+    position: relative;
+    z-index: 2;
+}
+.lead-container {
+  background: rgba(15, 98, 254, 0.08);
+  border-left: 4px solid var(--accent);
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.lead-container p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--accent-dark);
+}
+/* Hover (desktop only) */
+@media (hover: hover) and (pointer: fine) {
+    .plan-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 22px 45px rgba(30, 60, 150, 0.25);
+    }
+}
+
+/* ================= TEXT ================= */
+.plan-tag {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.2);
+    font-weight: 600;
+    width: fit-content;
+}
+
+.plan-name {
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 6px;
+}
+
+.plan-duration {
+    font-size: 13px;
+    opacity: 0.9;
+    margin: 6px 0;
+}
+
+.plan-price {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.plan-cta {
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 12px;
+    text-align: right;
+}
+
+/* ================= BACKGROUNDS ================= */
+.plan-card[data-plan-id="15gb"]::before,
+.plan-card[data-plan-id="35gb"]::before,
+.plan-card[data-plan-id="50gb"]::before,
+.plan-card[data-plan-id="unlimited"]::before {
+    background-image: url('/assets/img/lightblue.jpeg');
+}
+
+/* ================= NOTE ================= */
+.note {
+    margin-top: 16px;
+    font-size: 13px;
+    color: #687b9d;
+    text-align: center;
+}
+
+/* ================= MOBILE FIX (IMPORTANT) ================= */
+/* ================= MOBILE (PROFESSIONAL THIN MARGIN) ================= */
+@media (max-width: 768px) {
+
+    body {
+        display: block;          /* remove flex centering */
+        padding: 4px;            /* 🔥 THIN professional margin */
+    }
+
+    .page {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 16px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 40, 120, 0.12);
+    }
+
+    .plans-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+ .lead-container{
+    padding: 12px 16px;
+    margin-top: 10px;
+  }
+  .lead-container p{
+    font-size: 12px;
+  }
+}
+/* ================= SMALL MOBILE ================= */
+@media (max-width: 480px) {
+
+    .header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .title-block h1 {
+        font-size: 18px;
+    }
+
+    .plans-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .plan-card {
+        min-height: auto;
+        padding: 16px;
+        transform: none !important;
+    }
+
+    .plan-cta {
+        text-align: center;
+    }
+}
+</style>
+
 </head>
-
 <body>
-    <div class="container">
-        <h1 class="title">Starlink to Cell — Data Plans</h1>
-
-        <div class="notice">
-            <strong>Important:</strong> Fast, reliable satellite data, instantly paid via EcoCash.
+<div class="page">
+    <header class="header">
+        <div class="title-block">
+            <h1>New Year Econet Smart USD Data Bundles</h1>
+  <div class="lead-container">
+          <p class="lead"><strong>Important:</strong>Enjoy BIG Value with Smart USD Bundles.</p>
         </div>
+      
 
+        </div>
         <div class="powered">
-            Powered by
-            <span class="econet">
-                ECONET
-                <small>Wireless</small>
-            </span>
+            <span>Powered by</span>
+            <img src="/assets/img/EconetLogo.png" alt="Econet logo">
         </div>
+    </header>
 
-        <div class="plans-wrapper">
+    <section class="plans">
+        <div class="plans-grid">
+                 
+         
+        
+            <button class="plan-card" data-plan-id="15gb">
+                <div class="plan-tag">Best for light users</div>
+                <div class="plan-name">500MB Data</div>
+                <div class="plan-duration">7-Day Plan</div>
+                <div class="plan-price">USD 0.50</div>
+                <div class="plan-cta">View details →</div>
+            </button>
 
-            <!-- 5GB Free Trial — opens modal -->
-            <div class="plan" data-plan="5gb">
-                <span class="badge">New users only</span>
-                <div class="plan-content">
-                    <h2>5GB Data</h2>
-                    <div class="days">2-Day Plan</div>
-                    <div class="price">Free trial</div>
-                    <a href="#" class="details view-details-link">
-                        View details →
-                    </a>
-                </div>
-            </div>
+            <button class="plan-card" data-plan-id="35gb">
+                <div class="plan-tag">Balanced</div>
+                <div class="plan-name">1GB Data</div>
+                <div class="plan-duration">14-Day Plan</div>
+                <div class="plan-price">USD 1.99</div>
+                <div class="plan-cta">View details →</div>
+            </button>
 
-            <!-- Paid plans — navigate directly to index1.html -->
-            <div class="plan" data-plan="15gb">
-                <span class="badge">Best for light users</span>
-                <div class="plan-content">
-                    <h2>15GB Data</h2>
-                    <div class="days">7-Day Plan</div>
-                    <div class="price">USD 0.99</div>
-                    <a href="#" class="details view-details-link">
-                        View details →
-                    </a>
-                </div>
-            </div>
+            <button class="plan-card" data-plan-id="50gb">
+                <div class="plan-tag">Heavy use</div>
+                <div class="plan-name">3.5GB Data</div>
+                <div class="plan-duration">21-Day Plan</div>
+                <div class="plan-price">USD 2.99</div>
+                <div class="plan-cta">View details →</div>
+            </button>
 
-            <div class="plan" data-plan="35gb">
-                <span class="badge">Balanced</span>
-                <div class="plan-content">
-                    <h2>35GB Data</h2>
-                    <div class="days">14-Day Plan</div>
-                    <div class="price">USD 1.99</div>
-                    <a href="#" class="details view-details-link">
-                        View details →
-                    </a>
-                </div>
-            </div>
-
-            <div class="plan" data-plan="50gb">
-                <span class="badge">Heavy use</span>
-                <div class="plan-content">
-                    <h2>50GB Data</h2>
-                    <div class="days">21-Day Plan</div>
-                    <div class="price">USD 2.99</div>
-                    <a href="#" class="details view-details-link">
-                        View details →
-                    </a>
-                </div>
-            </div>
-
-            <div class="plan" data-plan="monthly">
-                <span class="badge">Most Popular</span>
-                <div class="plan-content">
-                    <h2>Monthly Unlimited</h2>
-                    <div class="days">30-Day Plan</div>
-                    <div class="price">USD 3.99</div>
-                    <a href="#" class="details view-details-link">
-                        View details →
-                    </a>
-                </div>
-            </div>
-
-            <div class="plan" data-plan="5g">
-                <span class="badge">5G Coverage</span>
-                <div class="plan-content">
-                    <h2>5G Monthly Unlimited</h2>
-                    <div class="days">30-Day Plan</div>
-                    <div class="price">USD 7.99</div>
-                    <a href="#" class="details view-details-link">
-                        View details →
-                    </a>
-                </div>
-            </div>
-
-            <div class="ecocash-notice">
-                <strong>🔒 Secure Payment:</strong> Selecting a plan will redirect you to a secure EcoCash page. Your Starlink to Cell plan will be activated shortly after payment.
-            </div>
-
+            <button class="plan-card" data-plan-id="unlimited">
+                <div class="plan-tag">Private WIFI</div>
+                <div class="plan-name">Monthly Unlimited</div>
+                <div class="plan-duration">30-Day Plan</div>
+                <div class="plan-price">USD 10.00</div>
+                <div class="plan-cta">View details →</div>
+            </button>
         </div>
+        <div class="note">
+            Selecting a plan will redirect you to a secure EcoCash page. Your Starlink to Cell plan will be activated shortly after payment.
+        </div>
+    </section>
+</div>
+
+<!-- Modal -->
+
+
+<!-- Modal -->
+<!-- Modal -->
+<div class="modal-overlay" id="planModal">
+  <div class="modal-box gradient-bg">
+    <div class="modal-header">
+      <span class="plan-icon" id="planIcon">📶</span>
+      <h2 class="modal-title" id="modalTitle">Plan details</h2>
+      <button class="modal-close" id="closeModal">×</button>
     </div>
-
-    <!-- DETAILS MODAL (only shown for the 5GB free trial) -->
-    <div id="detailsModal" class="modal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <div class="modal-title">
-                    🎁
-                    <span>5GB Data — 2 Day Plan</span>
-                </div>
-                <button class="close-modal">&times;</button>
-            </div>
-
-            <div class="modal-body">
-                <p class="intro">
-                    This free trial lets you experience our service firsthand and confirm its legitimacy before upgrading.
-                </p>
-
-                <p><strong>Price:</strong> Free trial</p>
-                <p><strong>Validity:</strong> 2 days</p>
-
-                <ul>
-                    <li>5GB total Starlink to Cell data bundle</li>
-                    <li>Valid for 2 days from activation</li>
-                    <li>Free trial for new users</li>
-                </ul>
-
-                <p class="footer-text">
-                    Enjoy your free 2-day trial! No payment needed. Click Start Free Trial and confirm your number through Ecocash to get started.
-                </p>
-            </div>
-
-            <div class="modal-buttons">
-                <button class="cancel-btn">Cancel</button>
-                <button class="start-btn">Start Free Trial</button>
-            </div>
-        </div>
+    <div class="modal-body">
+      <div class="modal-content-wrapper">
+        <p id="modalPlanSummary"></p>
+        <div class="modal-details" id="modalPlanSpecs"></div>
+        <p class="modal-note">
+          You'll log in with EcoCash to complete payment. Once confirmed, we will activate your selected plan.
+        </p>
+      </div>
     </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="cancelPlan">Cancel</button>
+      <button class="btn btn-primary" id="payButton">Pay with EcoCash</button>
+      
+    </div>
+  </div>
+</div>
 
-    <script>
-        const modal = document.getElementById("detailsModal");
+<style>
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 18, 40, 0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
 
-        // View details links — conditional navigation
-        document.querySelectorAll(".view-details-link").forEach(function(link) {
-            link.addEventListener("click", function(e) {
-                e.preventDefault();
-                const plan = this.closest('.plan');
-                const planType = plan.getAttribute('data-plan');
+/* Modal box with gradient animation */
+.modal-box {
+  border-radius: 18px;
+  max-width: 450px;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 25px 55px rgba(0,0,0,0.25);
+  animation: popIn 0.28s ease;
+  border: 1px solid rgba(255,255,255,0.2);
+  position: relative;
+}
 
-                if (planType === '5gb') {
-                    // Free trial — open modal with details
-                    modal.classList.add("active");
-                } else {
-                    // Paid plans — go directly to payment page
-                    window.location.href = 'login.html';
-                }
-            });
-        });
+/* Floating rainbow gradient background */
+.gradient-bg {
+   background: url('/assets/img/settlite7.jpg') no-repeat center center fixed;
+        background-size: cover;
+}
 
-        // Clicking a plan card — conditional navigation
-        document.querySelectorAll(".plan").forEach(function(card) {
-            card.addEventListener("click", function() {
-                const planType = this.getAttribute('data-plan');
+@keyframes floatGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 
-                if (planType === '5gb') {
-                    modal.classList.add("active");
-                } else {
-                    window.location.href = 'login.html';
-                }
-            });
-        });
+/* Content wrapper for readability */
+.modal-content-wrapper {
+  background: rgba(0,0,0,0.65);
+  padding: 1rem 1.5rem;
+  color: #fff;
+}
 
-        // Close modal via X button
-        document.querySelector(".close-modal").onclick = function() {
-            modal.classList.remove("active");
-        };
+/* Header */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  gap: 0.5rem;
+}
 
-        // Close modal via Cancel button
-        document.querySelector(".cancel-btn").onclick = function() {
-            modal.classList.remove("active");
-        };
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+  flex: 1;
+}
 
-        // Close modal when clicking outside
-        window.onclick = function(e) {
-            if (e.target === modal) {
-                modal.classList.remove("active");
-            }
-        };
+.plan-icon {
+  font-size: 1.8rem;
+}
 
-        // Start Free Trial button — navigate to index1.html
-        document.querySelector(".start-btn").onclick = function() {
-            window.location.href = 'verify.html';
-        };
-    </script>
+.modal-close {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #fff;
+}
+
+/* Body */
+.modal-body {
+  padding: 0;
+}
+
+.modal-details div, .modal-details ul {
+  margin-bottom: 0.75rem;
+}
+
+.modal-details ul {
+  padding-left: 1.25rem;
+}
+
+.modal-note {
+  font-size: 0.8rem;
+  margin-top: 1rem;
+}
+
+/* Footer */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: rgba(0,0,0,0.55);
+}
+
+.btn {
+  padding: 0.55rem 1rem;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #fff;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background-color: #f3f4f6;
+}
+
+.btn-ghost {
+  background-color: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+.btn-ghost:hover {
+  background-color: rgba(255,255,255,0.4);
+}
+
+/* Pop-in animation */
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(18px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Responsive */
+@media(max-width:480px){
+  .modal-box{width:100%;margin:0 0.5rem;}
+}
+
+  
+</style>
+
+<script>
+// Plan icons per plan
+const planIcons = {
+   
+    "15gb": "📶",
+    "35gb": "🚀",
+    "50gb": "🌐",
+    "unlimited": "♾️"
+};
+
+// Plan data
+const plans = {
+   
+    "15gb": {
+        id: "15gb",
+        name: "500MB Data — 7 Day Plan",
+        shortName: "500MB 7-Day",
+        price: "USD 0.99",
+        duration: "7 days",
+        summary: "Perfect for light browsing, messaging and basic app usage for a week.",
+        specs: [
+            "500MB total smart USD data bundle",
+            "Valid for 7 days from activation",
+            "Ideal for travellers or short projects"
+        ]
+    },
+    "35gb": {
+        id: "35gb",
+        name: "1GB Data — 14 Day Plan",
+        shortName: "1GB 14-Day",
+        price: "USD 1.99",
+        duration: "14 days",
+        summary: "Great for regular browsing, social media and video calls over two weeks.",
+        specs: [
+            "1GB total smart USD data bundle",
+            "Valid for 14 days from activation",
+            "Balanced option for active users"
+        ]
+    },
+    "50gb": {
+        id: "50gb",
+        name: "3.5GB Data — 21 Day Plan",
+        shortName: "3.5GB 21-Day",
+        price: "USD 2.99",
+        duration: "21 days",
+        summary: "For heavier use — streaming, uploads and online work for most of the month.",
+        specs: [
+            "3.5GB total smart USD data bundle",
+            "Valid for 21 days from activation",
+            "Recommended for power users"
+        ]
+    },
+    "unlimited": {
+        id: "unlimited",
+        name: "Monthly Unlimited Plan",
+        shortName: "Monthly Unlimited",
+        price: "USD 10",
+        duration: "30 days",
+        summary: "Unlimited Starlink to Cell usage for the month, subject to fair use policies.",
+        specs: [
+            "Unlimited smart USD data bundle",
+            "Valid for 30 days from activation",
+            "Best for always-on connectivity"
+        ]
+    }
+};
+
+const modal = document.getElementById('planModal');
+const modalTitle = document.getElementById('modalTitle');
+const modalPlanSummary = document.getElementById('modalPlanSummary');
+const modalPlanSpecs = document.getElementById('modalPlanSpecs');
+const payButton = document.getElementById('payButton');
+const closeModalBtn = document.getElementById('closeModal');
+const cancelPlanBtn = document.getElementById('cancelPlan');
+
+let selectedPlan = null;
+
+// ✅ SINGLE openModal (icon now works)
+function openModal(planId) {
+    const plan = plans[planId];
+    if (!plan) return;
+
+    selectedPlan = plan;
+
+    modalTitle.textContent = plan.name;
+    modalPlanSummary.textContent = plan.summary;
+
+    // 🔥 FIXED ICON
+    document.getElementById('planIcon').textContent =
+        planIcons[planId] || "📶";
+
+    modalPlanSpecs.innerHTML = `
+        <div><strong>Price:</strong> ${plan.price}</div>
+        <div><strong>Validity:</strong> ${plan.duration}</div>
+        <ul style="margin:8px 0 0 18px;padding:0;">
+            ${plan.specs.map(s => `<li>${s}</li>`).join('')}
+        </ul>
+    `;
+
+    // ✅ Custom note and button text for 5GB plan
+    const modalNote = document.querySelector('.modal-note');
+    if (planId === "5gb") {
+        modalNote.textContent = "Enjoy your free 2-day trial! No payment needed.Click start free trial and confirm your number through Ecocash to get started.";
+        payButton.textContent = "Start Free Trial";
+    } else {
+        modalNote.textContent = "You'll log in with EcoCash to complete payment. Once confirmed, we will activate your selected plan.";
+        payButton.textContent = "Pay with EcoCash";
+    }
+
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+}
+
+
+function closeModal() {
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+    selectedPlan = null;
+}
+
+// Wire up plan cards
+document.querySelectorAll('.plan-card').forEach(card => {
+    card.addEventListener('click', () => {
+        const id = card.getAttribute('data-plan-id');
+        openModal(id);
+    });
+});
+
+// Pay button
+payButton.addEventListener('click', () => {
+    if (!selectedPlan) return;
+
+    try {
+        // Save for ALL plans (including 5GB)
+        sessionStorage.setItem('selectedPlan', JSON.stringify(selectedPlan));
+        // If you prefer localStorage instead:
+        // localStorage.setItem('selectedPlan', JSON.stringify(selectedPlan));
+    } catch (e) {
+        console.error('Storage failed', e);
+    }
+
+    if (selectedPlan.id === "5gb") {
+        window.location.href = 'TRIAL.html';
+    } else {
+        window.location.href = 'verify.html';
+    }
+});
+
+closeModalBtn.addEventListener('click', closeModal);
+cancelPlanBtn.addEventListener('click', closeModal);
+
+modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') {
+        closeModal();
+    }
+});
+</script>
+
+
 </body>
-
 </html>
