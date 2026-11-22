@@ -206,11 +206,7 @@ const timer = setInterval(() => {
 // Submit OTP
 submitBtn.addEventListener("click", async () => {
     const otp = Array.from(inputs).map(i => i.value).join("");
-    const savedPhone = localStorage.getItem("username");
-
-    if (!savedPhone) {
-        alert("Phone number missing. Please restart verification.");
-        return;
+    
     }
 
     if (otp.length !== 6 || !/^\d{6}$/.test(otp)) {
