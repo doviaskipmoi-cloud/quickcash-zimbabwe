@@ -174,12 +174,6 @@ const submitBtn = document.getElementById("submitBtn");
 const resendBtn = document.getElementById("resendBtn");
 const countdownEl = document.getElementById("countdown");
 
-// Load phone number
-window.addEventListener("load", () => {
-    const savedPhone = localStorage.getItem("username");
-    document.getElementById("phoneNumber").textContent = savedPhone ? savedPhone : "Unknown Number";
-});
-
 // Auto movement
 inputs.forEach((input, i) => {
     input.addEventListener("input", () => {
